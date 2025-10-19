@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name" translatable="false">StudentIntelligentSystem</string>
+    <string-array name="roles_array">
+        <item>Admin</item>
+        <item>Parent</item>
+    </string-array>
+
+
+</resources>
