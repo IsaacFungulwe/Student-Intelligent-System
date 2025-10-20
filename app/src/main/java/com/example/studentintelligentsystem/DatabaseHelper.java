@@ -9,17 +9,30 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "student_system.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Tables
     private static final String TABLE_STUDENTS = "students";
     private static final String TABLE_PARENTS = "parents";
     private static final String TABLE_USERS = "users";
+    private static final String TABLE_RESULTS = "results";
+    private static final String TABLE_ATTENDANCE = "attendance";
 
     // Students columns
     private static final String COL_STU_ID = "id";
     private static final String COL_STU_NAME = "stu_name";
     private static final String COL_STU_GRADE = "stu_grade";
+    // Results columns
+    private static final String COL_RES_ID = "id";
+    private static final String COL_RES_STU_ID = "student_id";
+    private static final String COL_RES_SUBJECT = "subject";
+    private static final String COL_RES_SCORE = "score";
+
+    // Attendance columns
+    private static final String COL_ATT_ID = "id";
+    private static final String COL_ATT_STU_ID = "student_id";
+    private static final String COL_ATT_DATE = "date"; // store as TEXT yyyy-MM-dd
+    private static final String COL_ATT_PRESENT = "present"; // 0/1
 
     // Parents columns
     private static final String COL_PARENT_ID = "id";
@@ -55,10 +68,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_USERNAME + " TEXT PRIMARY KEY, " +
                 COL_USER_PASSWORD + " TEXT)";
         db.execSQL(createUsersTable);
+
+        // Results table
+        String createResultsTable = "CREATE TABLE IF NOT EXISTS " + TABLE_RESULTS + " (" +
+                COL_RES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_RES_STU_ID + " INTEGER, " +
+                COL_RES_SUBJECT + " TEXT, " +
+                COL_RES_SCORE + " INTEGER, " +
+                "FOREIGN KEY(" + COL_RES_STU_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + COL_STU_ID + "))";
+        db.execSQL(createResultsTable);
+
+        // Attendance table
+        String createAttendanceTable = "CREATE TABLE IF NOT EXISTS " + TABLE_ATTENDANCE + " (" +
+                COL_ATT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_ATT_STU_ID + " INTEGER, " +
+                COL_ATT_DATE + " TEXT, " +
+                COL_ATT_PRESENT + " INTEGER, " +
+                "FOREIGN KEY(" + COL_ATT_STU_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + COL_STU_ID + "))";
+        db.execSQL(createAttendanceTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Simple upgrade: create new tables if they don't exist
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
@@ -88,10 +122,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_STU_GRADE + " DESC");
     }
 
-    // -------------------------------
-    // PARENT METHODS
-    // -------------------------------
+    // RESULTS METHODS
+    public boolean addOrUpdateResult(int studentId, String subject, int score) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Try update first
+        ContentValues cv = new ContentValues();
+        cv.put(COL_RES_SCORE, score);
+        int rows = db.update(TABLE_RESULTS, cv, COL_RES_STU_ID + "=? AND " + COL_RES_SUBJECT + "=?",
+                new String[]{String.valueOf(studentId), subject});
+        if (rows > 0) return true;
 
+        // Insert new
+        ContentValues insert = new ContentValues();
+        insert.put(COL_RES_STU_ID, studentId);
+        insert.put(COL_RES_SUBJECT, subject);
+        insert.put(COL_RES_SCORE, score);
+        long res = db.insert(TABLE_RESULTS, null, insert);
+        return res != -1;
+    }
+
+    public Cursor getAllResults() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // join students and results to show student name
+        String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
+                " FROM " + TABLE_RESULTS + " r LEFT JOIN " + TABLE_STUDENTS + " s ON r." + COL_RES_STU_ID + " = s." + COL_STU_ID +
+                " ORDER BY r." + COL_RES_ID + " DESC";
+        return db.rawQuery(query, null);
+    }
+
+    public Cursor getResultsForStudent(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
+                " FROM " + TABLE_RESULTS + " r LEFT JOIN " + TABLE_STUDENTS + " s ON r." + COL_RES_STU_ID + " = s." + COL_STU_ID +
+                " WHERE r." + COL_RES_STU_ID + "=?";
+        return db.rawQuery(query, new String[]{String.valueOf(studentId)});
+    }
+
+    // ATTENDANCE METHODS
+    public boolean addAttendance(int studentId, String dateIso, boolean present) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_ATT_STU_ID, studentId);
+        cv.put(COL_ATT_DATE, dateIso);
+        cv.put(COL_ATT_PRESENT, present ? 1 : 0);
+        long res = db.insert(TABLE_ATTENDANCE, null, cv);
+        return res != -1;
+    }
+
+    public Cursor getAttendanceForStudent(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_ATTENDANCE, null, COL_ATT_STU_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, COL_ATT_DATE + " DESC");
+    }
+
+    // PARENT METHODS
     public boolean addParent(String email, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -161,5 +244,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean valid = cursor.moveToFirst();
         cursor.close();
         return valid;
+    }
+
+    // Delete a student by id
+    public boolean deleteStudent(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_STUDENTS, COL_STU_ID + "=?", new String[]{String.valueOf(id)});
+        return rows > 0;
     }
 }

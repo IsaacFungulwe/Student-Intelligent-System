@@ -12,12 +12,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentIntelligentSystem">
         <activity
-            android:name=".RegisterActivity"
+            android:name=".AdminDashBoard"
             android:exported="false" />
-        <!-- User screen -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" /> <!-- User screen -->
         <activity
             android:name=".UserActivity"
             android:exported="false" /> <!-- Login screen (launches first) -->
+        <activity
+            android:name=".ManageStudentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CheckResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UpdateResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MarkRegisterActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

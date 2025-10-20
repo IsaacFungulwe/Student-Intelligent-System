@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Student"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/adminEditName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Student name"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/adminEditGrade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Grade (number)"
+            android:inputType="number"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/adminBtnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Student"
+            android:layout_marginBottom="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove Student"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/adminEditRemoveId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Student ID to remove"
+            android:inputType="number"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/adminBtnRemove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remove Student"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Student list so admin can see IDs and long-press to delete -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Students"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <ListView
+            android:id="@+id/adminListStudents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="#CCCCCC"
+            android:dividerHeight="1dp" />
+
+    </LinearLayout>
+</ScrollView>

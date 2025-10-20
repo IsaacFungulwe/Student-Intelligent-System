@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
             // Admin has fixed credentials
             if (email.equals("admin@gmail.com") && password.equals("admin123")) {
                 saveSession("admin");
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, AdminDashBoard.class));
                 finish();
             } else {
                 showError();
