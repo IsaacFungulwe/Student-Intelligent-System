@@ -70,7 +70,8 @@
             android:id="@+id/editResultSubject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Subject" />
+            android:hint="Subject"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/editResultScore"

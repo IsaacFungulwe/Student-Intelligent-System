@@ -27,10 +27,10 @@
             android:name=".CheckResultsActivity"
             android:exported="false" />
         <activity
-            android:name=".UpdateResultsActivity"
+            android:name=".MarkRegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".MarkRegisterActivity"
+            android:name=".RegisterStudentActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Student Records"
+        android:text="@string/user_title"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="#2C3E50"
@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="@string/header_name"
             android:textStyle="bold"
             android:textColor="#000000"
             android:gravity="center" />
@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Grade"
+            android:text="@string/header_grade"
             android:textStyle="bold"
             android:textColor="#000000"
             android:gravity="center" />

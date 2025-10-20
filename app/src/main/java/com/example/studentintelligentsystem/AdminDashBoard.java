@@ -1,28 +1,25 @@
 package com.example.studentintelligentsystem;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import com.example.studentintelligentsystem.ManageStudentsActivity;
 
 public class AdminDashBoard extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Use the existing layout file activity_admin_dash_board.xml
         setContentView(R.layout.activity_admin_dash_board);
 
-        // Wire Add/Remove card to ManageStudentsActivity
-        CardView cardAddRemove = findViewById(R.id.cardAddRemove);
-        if (cardAddRemove != null) {
-            cardAddRemove.setOnClickListener(new View.OnClickListener() {
+        // Wire Register Student card to RegisterStudentActivity
+        CardView cardRegisterStudent = findViewById(R.id.cardRegisterStudent);
+        if (cardRegisterStudent != null) {
+            cardRegisterStudent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(AdminDashBoard.this, ManageStudentsActivity.class));
+                    startActivity(new Intent(AdminDashBoard.this, RegisterStudentActivity.class));
                 }
             });
         }
@@ -38,13 +35,13 @@ public class AdminDashBoard extends AppCompatActivity {
             });
         }
 
-        // Wire Update Results
+        // Wire Update Results to ManageStudentsActivity
         CardView cardUpdate = findViewById(R.id.cardUpdateResults);
         if (cardUpdate != null) {
             cardUpdate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(AdminDashBoard.this, UpdateResultsActivity.class));
+                    startActivity(new Intent(AdminDashBoard.this, ManageStudentsActivity.class));
                 }
             });
         }
@@ -59,9 +56,5 @@ public class AdminDashBoard extends AppCompatActivity {
                 }
             });
         }
-
-        // You can wire up other CardView click listeners here if needed
     }
-
-    // Add other methods for your admin buttons (Check Results, Update Results etc.)
 }

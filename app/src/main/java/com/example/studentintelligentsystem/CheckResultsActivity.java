@@ -2,8 +2,8 @@ package com.example.studentintelligentsystem;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -34,14 +34,14 @@ public class CheckResultsActivity extends AppCompatActivity {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow("stu_name"));
                 String subject = cursor.getString(cursor.getColumnIndexOrThrow("subject"));
                 int score = cursor.getInt(cursor.getColumnIndexOrThrow("score"));
-                String line = (name != null ? name : "Unknown") + " (ID:" + studentId + ") - " + subject + ": " + score;
-                items.add(line);
+                String line1 = (name != null ? name : getString(R.string.unknown_student)) + " (" + getString(R.string.student_id_label) + studentId + ")";
+                String line2 = getString(R.string.subject_and_score_label, subject, score);
+                items.add(line1 + " - " + line2);
             }
             cursor.close();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+        ResultAdapter adapter = new ResultAdapter(this, items);
         listViewResults.setAdapter(adapter);
     }
 }
-

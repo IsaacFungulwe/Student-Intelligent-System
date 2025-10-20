@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             String gradeStr = editStudentGrade.getText().toString().trim();
 
             if (name.isEmpty() || gradeStr.isEmpty()) {
-                Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -37,14 +37,14 @@ public class MainActivity extends AppCompatActivity {
                 int grade = Integer.parseInt(gradeStr);
                 boolean success = db.addStudent(name, grade);
                 if (success) {
-                    Toast.makeText(this, "Student added", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.student_added), Toast.LENGTH_SHORT).show();
                     editStudentName.setText("");
                     editStudentGrade.setText("");
                 } else {
-                    Toast.makeText(this, "Error adding student", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.error_adding_student), Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Grade must be a number", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.grade_must_be_number), Toast.LENGTH_SHORT).show();
             }
         });
     }

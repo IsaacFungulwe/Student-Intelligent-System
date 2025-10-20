@@ -34,21 +34,25 @@ public class ManageStudentsActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
+        // Initialize views for Register/Edit Student
         editStudentId = findViewById(R.id.editStudentId);
         editStudentName = findViewById(R.id.editStudentName);
         editStudentGrade = findViewById(R.id.editStudentGrade);
         btnAddEditStudent = findViewById(R.id.btnAddEditStudent);
 
+        // Initialize views for Update Results
         editResultStudentId = findViewById(R.id.editResultStudentId);
         editResultSubject = findViewById(R.id.editResultSubject);
         editResultScore = findViewById(R.id.editResultScore);
         btnUpdateResult = findViewById(R.id.btnUpdateResult);
 
+        // Initialising the ListView
         adminListStudents = findViewById(R.id.adminListStudents);
         listIds = new ArrayList<>();
         listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>());
         adminListStudents.setAdapter(listAdapter);
 
+        // Set button listeners
         btnAddEditStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +67,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
             }
         });
 
+        // Set ListView item click listener to populate fields for editing
         adminListStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +79,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
             }
         });
 
+        // Set ListView long-click listener for deletion
         adminListStudents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -94,7 +100,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
         String gradeStr = editStudentGrade.getText().toString().trim();
 
         if (name.isEmpty() || gradeStr.isEmpty()) {
-            Toast.makeText(this, "Student name and grade are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.student_name_and_grade_required), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -104,25 +110,25 @@ public class ManageStudentsActivity extends AppCompatActivity {
             if (studentIdStr.isEmpty()) { // Add new student
                 boolean studentAdded = db.addStudent(name, grade);
                 if (studentAdded) {
-                    Toast.makeText(this, "Student added successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.student_added_successfully), Toast.LENGTH_SHORT).show();
                     clearInputFields();
                     loadStudents();
                 } else {
-                    Toast.makeText(this, "Error adding student", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.error_adding_student), Toast.LENGTH_SHORT).show();
                 }
             } else { // Update existing student
                 int studentId = Integer.parseInt(studentIdStr);
                 boolean updated = db.updateStudent(studentId, name, grade);
                 if (updated) {
-                    Toast.makeText(this, "Student updated successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.student_updated_successfully), Toast.LENGTH_SHORT).show();
                     clearInputFields();
                     loadStudents();
                 } else {
-                    Toast.makeText(this, "Error updating student", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.error_updating_student), Toast.LENGTH_SHORT).show();
                 }
             }
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Grade and ID must be numbers", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.grade_and_id_must_be_numbers), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -132,7 +138,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
         String scoreStr = editResultScore.getText().toString().trim();
 
         if (studentIdStr.isEmpty() || subject.isEmpty() || scoreStr.isEmpty()) {
-            Toast.makeText(this, "All fields are required to update results", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.all_fields_required_to_update_results), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -142,16 +148,15 @@ public class ManageStudentsActivity extends AppCompatActivity {
 
             boolean resultUpdated = db.addOrUpdateResult(studentId, subject, score);
             if (resultUpdated) {
-                Toast.makeText(this, "Result updated successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.result_updated_successfully), Toast.LENGTH_SHORT).show();
                 clearInputFields();
             } else {
-                Toast.makeText(this, "Error updating result", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_updating_result), Toast.LENGTH_SHORT).show();
             }
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Student ID and score must be numbers", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.student_id_and_score_must_be_numbers), Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void clearInputFields() {
         editStudentId.setText("");
@@ -166,14 +171,16 @@ public class ManageStudentsActivity extends AppCompatActivity {
         listIds.clear();
         List<String> items = new ArrayList<>();
         Cursor cursor = db.getAllStudentsSorted();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow("stu_name"));
-                int grade = cursor.getInt(cursor.getColumnIndexOrThrow("stu_grade"));
-                listIds.add(id);
-                items.add("ID:" + id + " - " + name + " (Grade " + grade + ")");
-            } while (cursor.moveToNext());
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("stu_name"));
+                    int grade = cursor.getInt(cursor.getColumnIndexOrThrow("stu_grade"));
+                    listIds.add(id);
+                    items.add("ID:" + id + " - " + name + " (Grade " + grade + ")");
+                } while (cursor.moveToNext());
+            }
             cursor.close();
         }
 
@@ -184,22 +191,22 @@ public class ManageStudentsActivity extends AppCompatActivity {
 
     private void showDeleteConfirmation(final int studentId) {
         new AlertDialog.Builder(this)
-                .setTitle("Delete student")
-                .setMessage("Are you sure you want to delete student ID: " + studentId + "?")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.delete_student_dialog_title))
+                .setMessage(getString(R.string.delete_student_dialog_message, studentId))
+                .setPositiveButton(getString(R.string.delete_button), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean deleted = db.deleteStudent(studentId);
                         if (deleted) {
-                            Toast.makeText(ManageStudentsActivity.this, "Student removed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ManageStudentsActivity.this, getString(R.string.student_removed), Toast.LENGTH_SHORT).show();
                             clearInputFields();
                             loadStudents();
                         } else {
-                            Toast.makeText(ManageStudentsActivity.this, "No student found with that ID", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ManageStudentsActivity.this, getString(R.string.no_student_found_with_that_id), Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getString(R.string.cancel_button), null)
                 .show();
     }
 }

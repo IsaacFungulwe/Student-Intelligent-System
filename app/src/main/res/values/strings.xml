@@ -5,5 +5,72 @@
         <item>Parent</item>
     </string-array>
 
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
 
+    <string name="admin_title">🎓 Admin - Student Records</string>
+    <string name="student_name_hint">Student Name</string>
+    <string name="student_grade_hint">Student Grade</string>
+    <string name="add_student_button">Add Student</string>
+    <string name="content_description_student_name">Enter student name</string>
+    <string name="content_description_student_grade">Enter student grade</string>
+    <string name="content_description_add_student">Add a new student</string>
+
+    <string name="user_title">Student Records</string>
+    <string name="header_name">Name</string>
+    <string name="header_grade">Grade</string>
+
+    <string name="login_title">Student Intelligent System</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="password_hint">Enter password</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up (For Parents)</string>
+
+    <string name="student_details_title">Student Details</string>
+    <string name="student_name_label">Student Name</string>
+    <string name="grade_label">Grade</string>
+    <string name="age_label">Age</string>
+    <string name="parent_guardian_details_title">Parent/Guardian Details</string>
+    <string name="parent_guardian_name_label">Parent/Guardian Name</string>
+    <string name="parent_guardian_email_label">Parent/Guardian Email</string>
+    <string name="parent_guardian_phone_label">Parent/Guardian Phone</string>
+    <string name="address_label">Address</string>
+    <string name="register_student_button">Register Student</string>
+    <string name="content_description_student_name_input">Enter student\'s name</string>
+    <string name="content_description_student_grade_input">Enter student\'s grade</string>
+    <string name="content_description_student_age_input">Enter student\'s age</string>
+    <string name="content_description_gender_spinner">Select student\'s gender</string>
+    <string name="content_description_parent_name_input">Enter parent or guardian\'s name</string>
+    <string name="content_description_parent_email_input">Enter parent or guardian\'s email</string>
+    <string name="content_description_parent_phone_input">Enter parent or guardian\'s phone number</string>
+    <string name="content_description_address_input">Enter your address</string>
+    <string name="content_description_register_student_button">Register the student</string>
+
+    <string name="fill_all_fields">Fill all fields</string>
+    <string name="student_added">Student added</string>
+    <string name="error_adding_student">Error adding student</string>
+    <string name="grade_must_be_number">Grade must be a number</string>
+
+    <string name="student_name_and_grade_required">Student name and grade are required</string>
+    <string name="student_added_successfully">Student added successfully</string>
+    <string name="error_updating_student">Error updating student</string>
+    <string name="student_updated_successfully">Student updated successfully</string>
+    <string name="grade_and_id_must_be_numbers">Grade and ID must be numbers</string>
+    <string name="all_fields_required_to_update_results">All fields are required to update results</string>
+    <string name="result_updated_successfully">Result updated successfully</string>
+    <string name="error_updating_result">Error updating result</string>
+    <string name="student_id_and_score_must_be_numbers">Student ID and score must be numbers</string>
+    <string name="delete_student_dialog_title">Delete Student</string>
+    <string name="delete_student_dialog_message">Are you sure you want to delete student ID: %1$d?</string>
+    <string name="delete_button">Delete</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="student_removed">Student removed</string>
+    <string name="no_student_found_with_that_id">No student found with that ID</string>
+
+    <string name="unknown_student">Unknown</string>
+    <string name="student_id_label">ID:</string>
+    <string name="subject_and_score_label">%1$s: %2$d</string>
 </resources>
