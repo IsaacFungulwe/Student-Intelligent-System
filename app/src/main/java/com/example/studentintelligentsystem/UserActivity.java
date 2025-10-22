@@ -31,7 +31,8 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void loadStudents() {
-        Cursor cursor = db.getAllStudentsSorted();
+        studentList.clear();
+        Cursor cursor = db.getAllStudents(); // fixed method
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));

@@ -1,24 +1,33 @@
 package com.example.studentintelligentsystem;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class MarkRegisterActivity extends AppCompatActivity {
 
-    private EditText editStudentIdAtt, editDate;
+    private Spinner spinnerStudents;
+    private EditText editDate;
     private CheckBox cbPresent;
     private Button btnMark;
     private DatabaseHelper db;
+
+    // Map to hold student name -> ID
+    private HashMap<String, Integer> studentMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,39 +36,58 @@ public class MarkRegisterActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
-        editStudentIdAtt = findViewById(R.id.editStudentIdAtt);
+        spinnerStudents = findViewById(R.id.spinnerStudents);
         editDate = findViewById(R.id.editDate);
         cbPresent = findViewById(R.id.cbPresent);
         btnMark = findViewById(R.id.btnMark);
 
-        // default date to today
+        // Default date to today
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
         editDate.setText(today);
+
+        loadStudentsIntoSpinner();
 
         btnMark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String idStr = editStudentIdAtt.getText().toString().trim();
+                String selectedStudent = spinnerStudents.getSelectedItem().toString();
+                Integer studentId = studentMap.get(selectedStudent);
                 String date = editDate.getText().toString().trim();
                 boolean present = cbPresent.isChecked();
-                if (idStr.isEmpty() || date.isEmpty()) {
-                    Toast.makeText(MarkRegisterActivity.this, "Fill all fields", Toast.LENGTH_SHORT).show();
+
+                if (studentId == null) {
+                    Toast.makeText(MarkRegisterActivity.this, "No student selected", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                try {
-                    int id = Integer.parseInt(idStr);
-                    boolean ok = db.addAttendance(id, date, present);
-                    if (ok) {
-                        Toast.makeText(MarkRegisterActivity.this, "Attendance marked", Toast.LENGTH_SHORT).show();
-                        editStudentIdAtt.setText("");
-                    } else {
-                        Toast.makeText(MarkRegisterActivity.this, "Error marking attendance", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MarkRegisterActivity.this, "ID must be a number", Toast.LENGTH_SHORT).show();
+                if (date.isEmpty()) {
+                    Toast.makeText(MarkRegisterActivity.this, "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                boolean ok = db.addAttendance(studentId, date, present);
+                if (ok) {
+                    Toast.makeText(MarkRegisterActivity.this, "Attendance marked for " + selectedStudent, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MarkRegisterActivity.this, "Error marking attendance", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-}
 
+    private void loadStudentsIntoSpinner() {
+        Cursor cursor = db.getAllStudents();
+        ArrayList<String> studentNames = new ArrayList<>();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow("stu_name"));
+                studentNames.add(name);
+                studentMap.put(name, id);
+            }
+            cursor.close();
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, studentNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStudents.setAdapter(adapter);
+    }
+}

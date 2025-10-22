@@ -1,137 +1,135 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?><ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:padding="16dp"
-    tools:context=".RegisterStudentActivity">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".RegisterStudentActivity">
 
+        <!-- Student Personal Info -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/student_details_title"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#2196F3"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Student Information -->
-        <EditText
-            android:id="@+id/etStudentName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/student_name_label"
-            android:inputType="textPersonName"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_student_name_input"/>
-
-        <EditText
-            android:id="@+id/etStudentGrade"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/grade_label"
-            android:inputType="number"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_student_grade_input"/>
-
-        <EditText
-            android:id="@+id/etStudentAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/age_label"
-            android:inputType="number"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_student_age_input"/>
-
-        <Spinner
-            android:id="@+id/spinnerGender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/gender_array"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="24dp"
-            android:contentDescription="@string/content_description_gender_spinner"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/parent_guardian_details_title"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#2196F3"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Parent/Guardian Information -->
-        <EditText
-            android:id="@+id/etParentName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/parent_guardian_name_label"
-            android:inputType="textPersonName"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_parent_name_input"/>
-
-        <EditText
-            android:id="@+id/etParentEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/parent_guardian_email_label"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_parent_email_input"/>
-
-        <EditText
-            android:id="@+id/etParentPhone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/parent_guardian_phone_label"
-            android:inputType="phone"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/content_description_parent_phone_input"/>
-
-        <EditText
-            android:id="@+id/etAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/address_label"
-            android:inputType="textPostalAddress"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="24dp"
-            android:contentDescription="@string/content_description_address_input"/>
-
-        <Button
-            android:id="@+id/btnRegisterStudent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/register_student_button"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
+            android:text="Student Information"
             android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editStudentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Full Name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editStudentAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Age"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/editStudentGrade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Grade / Class"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/editStudentGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Gender"
+            android:inputType="textCapWords" />
+
+        <EditText
+            android:id="@+id/editStudentAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Home Address"
+            android:inputType="textPostalAddress" />
+
+        <!-- Parent/Guardian Info -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Parent/Guardian Information"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editParentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Parent's Name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editParentEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Parent's Email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/editParentPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Parent's Phone Number"
+            android:inputType="phone" />
+
+        <!-- Action Button -->
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Register Student" />
+
+        <!-- This layout will be shown only after a successful registration -->
+        <LinearLayout
+            android:id="@+id/layoutGeneratedId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
             android:padding="16dp"
-            android:contentDescription="@string/content_description_register_student_button"/>
+            android:background="#E0F7FA"
+            android:visibility="gone"
+            tools:visibility="visible"> <!-- tools:visibility makes it visible in the preview -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Student Registered Successfully!"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tvGeneratedId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:textColor="@android:color/holo_blue_dark"
+                tools:text="The new Student ID is: 101" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

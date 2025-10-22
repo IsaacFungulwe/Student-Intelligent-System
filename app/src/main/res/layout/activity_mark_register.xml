@@ -15,15 +15,14 @@
             android:text="Mark Register"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
-        <EditText
-            android:id="@+id/editStudentIdAtt"
+        <!-- Spinner for selecting student -->
+        <Spinner
+            android:id="@+id/spinnerStudents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Student ID"
-            android:inputType="number"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
         <EditText
             android:id="@+id/editDate"
@@ -31,14 +30,14 @@
             android:layout_height="wrap_content"
             android:hint="Date (YYYY-MM-DD)"
             android:inputType="date"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
         <CheckBox
             android:id="@+id/cbPresent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Present"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/btnMark"

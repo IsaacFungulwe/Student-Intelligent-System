@@ -53,42 +53,25 @@ public class ManageStudentsActivity extends AppCompatActivity {
         adminListStudents.setAdapter(listAdapter);
 
         // Set button listeners
-        btnAddEditStudent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addOrEditStudent();
-            }
-        });
-
-        btnUpdateResult.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateResults();
-            }
-        });
+        btnAddEditStudent.setOnClickListener(v -> addOrEditStudent());
+        btnUpdateResult.setOnClickListener(v -> updateResults());
 
         // Set ListView item click listener to populate fields for editing
-        adminListStudents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < listIds.size()) {
-                    int studentId = listIds.get(position);
-                    editStudentId.setText(String.valueOf(studentId));
-                    editResultStudentId.setText(String.valueOf(studentId));
-                }
+        adminListStudents.setOnItemClickListener((parent, view, position, id) -> {
+            if (position >= 0 && position < listIds.size()) {
+                int studentId = listIds.get(position);
+                editStudentId.setText(String.valueOf(studentId));
+                editResultStudentId.setText(String.valueOf(studentId));
             }
         });
 
         // Set ListView long-click listener for deletion
-        adminListStudents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < listIds.size()) {
-                    int studentId = listIds.get(position);
-                    showDeleteConfirmation(studentId);
-                }
-                return true;
+        adminListStudents.setOnItemLongClickListener((parent, view, position, id) -> {
+            if (position >= 0 && position < listIds.size()) {
+                int studentId = listIds.get(position);
+                showDeleteConfirmation(studentId);
             }
+            return true;
         });
 
         loadStudents();
@@ -108,8 +91,10 @@ public class ManageStudentsActivity extends AppCompatActivity {
             int grade = Integer.parseInt(gradeStr);
 
             if (studentIdStr.isEmpty()) { // Add new student
-                boolean studentAdded = db.addStudent(name, grade);
-                if (studentAdded) {
+                // Create Student object
+                Student student = new Student(name, grade, 0, "", "", "", "", "");
+                long newId = db.addStudentAndGetId(student);
+                if (newId != -1) {
                     Toast.makeText(this, getString(R.string.student_added_successfully), Toast.LENGTH_SHORT).show();
                     clearInputFields();
                     loadStudents();
@@ -118,7 +103,8 @@ public class ManageStudentsActivity extends AppCompatActivity {
                 }
             } else { // Update existing student
                 int studentId = Integer.parseInt(studentIdStr);
-                boolean updated = db.updateStudent(studentId, name, grade);
+                Student student = new Student(studentId, name, grade);
+                boolean updated = db.updateStudent(student);
                 if (updated) {
                     Toast.makeText(this, getString(R.string.student_updated_successfully), Toast.LENGTH_SHORT).show();
                     clearInputFields();
@@ -170,7 +156,7 @@ public class ManageStudentsActivity extends AppCompatActivity {
     private void loadStudents() {
         listIds.clear();
         List<String> items = new ArrayList<>();
-        Cursor cursor = db.getAllStudentsSorted();
+        Cursor cursor = db.getAllStudents(); // updated method
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -193,17 +179,14 @@ public class ManageStudentsActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.delete_student_dialog_title))
                 .setMessage(getString(R.string.delete_student_dialog_message, studentId))
-                .setPositiveButton(getString(R.string.delete_button), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        boolean deleted = db.deleteStudent(studentId);
-                        if (deleted) {
-                            Toast.makeText(ManageStudentsActivity.this, getString(R.string.student_removed), Toast.LENGTH_SHORT).show();
-                            clearInputFields();
-                            loadStudents();
-                        } else {
-                            Toast.makeText(ManageStudentsActivity.this, getString(R.string.no_student_found_with_that_id), Toast.LENGTH_SHORT).show();
-                        }
+                .setPositiveButton(getString(R.string.delete_button), (dialog, which) -> {
+                    boolean deleted = db.deleteStudent(studentId);
+                    if (deleted) {
+                        Toast.makeText(ManageStudentsActivity.this, getString(R.string.student_removed), Toast.LENGTH_SHORT).show();
+                        clearInputFields();
+                        loadStudents();
+                    } else {
+                        Toast.makeText(ManageStudentsActivity.this, getString(R.string.no_student_found_with_that_id), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel_button), null)
