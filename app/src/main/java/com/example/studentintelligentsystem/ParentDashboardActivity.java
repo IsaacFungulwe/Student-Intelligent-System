@@ -51,13 +51,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ArrayList<String> childrenList = new ArrayList<>();
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_STUDENT,
-                new String[]{DatabaseHelper.STUDENT_NAME, DatabaseHelper.STUDENT_GRADE},
-                DatabaseHelper.STUDENT_FK_PARENT_ID + " = ?",
-                new String[]{String.valueOf(parentId)},
-                null, null, null
-        );
+        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT, new String[]{DatabaseHelper.STUDENT_NAME, DatabaseHelper.STUDENT_GRADE}, DatabaseHelper.STUDENT_FK_PARENT_ID + " = ?", new String[]{String.valueOf(parentId)}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -77,7 +71,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, childrenList);
         lvMyChildren.setAdapter(adapter);
 
-        // Save the grades for the announcement query
         SharedPreferences.Editor editor = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
         Set<String> gradesStrSet = new HashSet<>();
         for (Integer grade : childrenGrades) {
@@ -94,8 +87,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ArrayList<String> announcementList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Build the selection query dynamically
-        StringBuilder selection = new StringBuilder(DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET + " IS NULL"); // Admin announcements
+        StringBuilder selection = new StringBuilder(DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET + " IS NULL");
         if (!childrenGrades.isEmpty()) {
             selection.append(" OR " + DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET + " IN (");
             for (int i = 0; i < childrenGrades.size(); i++) {
@@ -109,19 +101,14 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         String[] selectionArgs = childrenGrades.toArray(new String[0]);
 
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_ANNOUNCEMENT,
-                new String[]{DatabaseHelper.ANNOUNCEMENT_TITLE, DatabaseHelper.ANNOUNCEMENT_MESSAGE},
-                selection.toString(),
-                selectionArgs,
-                null, null, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP + " DESC"
-        );
+        Cursor cursor = db.query(DatabaseHelper.TABLE_ANNOUNCEMENT, new String[]{DatabaseHelper.ANNOUNCEMENT_TITLE, DatabaseHelper.ANNOUNCEMENT_MESSAGE, DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL}, selection.toString(), selectionArgs, null, null, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP + " DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_TITLE));
                 String message = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_MESSAGE));
-                announcementList.add(title + "\n" + message);
+                String source = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL));
+                announcementList.add("[" + source + "] " + title + "\n" + message);
             } while (cursor.moveToNext());
             cursor.close();
         }

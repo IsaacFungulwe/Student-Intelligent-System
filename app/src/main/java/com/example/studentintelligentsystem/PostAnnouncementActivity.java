@@ -40,9 +40,8 @@ public class PostAnnouncementActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         userRole = prefs.getString(LoginActivity.KEY_USER_ROLE, "");
         userId = prefs.getInt(LoginActivity.KEY_USER_ID, -1);
-        userGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1); // Will be -1 for Admins/Parents
+        userGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
 
-        // Customize title based on role
         if ("Teacher".equals(userRole) && userGrade != -1) {
             tvPostAnnouncementTitle.setText("Post to Grade " + userGrade + " Parents");
         } else {
@@ -60,9 +59,8 @@ public class PostAnnouncementActivity extends AppCompatActivity {
             Toast.makeText(this, "Title and message cannot be empty.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (userId == -1 || TextUtils.isEmpty(userRole)) {
-            Toast.makeText(this, "Error: Could not verify your login. Please log in again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error: Could not verify login. Please log in again.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -73,12 +71,12 @@ public class PostAnnouncementActivity extends AppCompatActivity {
         values.put(DatabaseHelper.ANNOUNCEMENT_ROLE, userRole);
         values.put(DatabaseHelper.ANNOUNCEMENT_FK_CREATOR_ID, userId);
 
-        // Set the gradeTarget based on the user's role
         if ("Teacher".equals(userRole)) {
             values.put(DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET, userGrade);
+            values.put(DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL, "Class Teacher"); // Set source for Teacher
         } else {
-            // For Admin, we leave it as NULL by not putting anything.
             values.putNull(DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET);
+            values.put(DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL, "School"); // Set source for Admin
         }
 
         long newRowId = db.insert(DatabaseHelper.TABLE_ANNOUNCEMENT, null, values);
@@ -86,7 +84,7 @@ public class PostAnnouncementActivity extends AppCompatActivity {
 
         if (newRowId != -1) {
             Toast.makeText(this, "Announcement posted successfully!", Toast.LENGTH_SHORT).show();
-            finish(); // Go back to the dashboard
+            finish();
         } else {
             Toast.makeText(this, "Error posting announcement.", Toast.LENGTH_LONG).show();
         }

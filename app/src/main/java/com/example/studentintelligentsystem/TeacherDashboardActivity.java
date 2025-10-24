@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class TeacherDashboardActivity extends AppCompatActivity {
 
     private TextView tvTeacherWelcome;
-    private Button btnRegisterStudent, btnMarkAttendance, btnAddResults, btnPostTeacherAnnouncement;
+    private Button btnRegisterStudent, btnMarkAttendance, btnAddResults, btnManageSubjects, btnPostTeacherAnnouncement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +22,9 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         btnRegisterStudent = findViewById(R.id.btnRegisterStudent);
         btnMarkAttendance = findViewById(R.id.btnMarkAttendance);
         btnAddResults = findViewById(R.id.btnAddResults);
+        btnManageSubjects = findViewById(R.id.btnManageSubjects);
         btnPostTeacherAnnouncement = findViewById(R.id.btnPostTeacherAnnouncement);
 
-        // Get the logged-in teacher's grade from SharedPreferences
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
 
@@ -34,24 +34,10 @@ public class TeacherDashboardActivity extends AppCompatActivity {
             tvTeacherWelcome.setText("Teacher Dashboard");
         }
 
-        btnRegisterStudent.setOnClickListener(v -> {
-            Intent intent = new Intent(this, StudentRegisterActivity.class);
-            startActivity(intent);
-        });
-
-        btnMarkAttendance.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MarkAttendanceActivity.class);
-            startActivity(intent);
-        });
-
-        btnAddResults.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AddResultsActivity.class);
-            startActivity(intent);
-        });
-
-        btnPostTeacherAnnouncement.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PostAnnouncementActivity.class);
-            startActivity(intent);
-        });
+        btnRegisterStudent.setOnClickListener(v -> startActivity(new Intent(this, StudentRegisterActivity.class)));
+        btnMarkAttendance.setOnClickListener(v -> startActivity(new Intent(this, MarkAttendanceActivity.class)));
+        btnAddResults.setOnClickListener(v -> startActivity(new Intent(this, AddResultsActivity.class)));
+        btnManageSubjects.setOnClickListener(v -> startActivity(new Intent(this, ManageSubjectsActivity.class)));
+        btnPostTeacherAnnouncement.setOnClickListener(v -> startActivity(new Intent(this, PostAnnouncementActivity.class)));
     }
 }

@@ -39,6 +39,13 @@
         android:layout_marginBottom="16dp"/>
 
     <Button
+        android:id="@+id/btnManageSubjects"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manage Subjects for Your Grade"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
         android:id="@+id/btnPostTeacherAnnouncement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

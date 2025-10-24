@@ -33,6 +33,7 @@
         <activity android:name=".StudentRegisterActivity" android:exported="false" />
         <activity android:name=".MarkAttendanceActivity" android:exported="false" />
         <activity android:name=".AddResultsActivity" android:exported="false" />
+        <activity android:name=".ManageSubjectsActivity" android:exported="false" />
 
         <!-- Parent Role Activities -->
         <activity android:name=".ParentDashboardActivity" android:exported="false" />
