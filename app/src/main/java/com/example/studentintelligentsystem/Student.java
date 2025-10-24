@@ -1,8 +1,11 @@
 package com.example.studentintelligentsystem;
 
-public class Student {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private int id;
+public class Student implements Parcelable {
+
+    private long id;
     private String name;
     private int grade;
     private int age;
@@ -25,13 +28,55 @@ public class Student {
         this.address = address;
     }
 
-    public Student(int id, String name, int grade) {
+    public Student(long id, String name, int grade) {
         this.id = id;
         this.name = name;
         this.grade = grade;
     }
 
-    public int getId() {
+    protected Student(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        grade = in.readInt();
+        age = in.readInt();
+        gender = in.readString();
+        parentName = in.readString();
+        parentEmail = in.readString();
+        parentPhone = in.readString();
+        address = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeInt(grade);
+        dest.writeInt(age);
+        dest.writeString(gender);
+        dest.writeString(parentName);
+        dest.writeString(parentEmail);
+        dest.writeString(parentPhone);
+        dest.writeString(address);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Student> CREATOR = new Creator<Student>() {
+        @Override
+        public Student createFromParcel(Parcel in) {
+            return new Student(in);
+        }
+
+        @Override
+        public Student[] newArray(int size) {
+            return new Student[size];
+        }
+    };
+
+    public long getId() {
         return id;
     }
 
@@ -67,7 +112,7 @@ public class Student {
         return address;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
