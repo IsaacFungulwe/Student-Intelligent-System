@@ -23,7 +23,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +50,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDate = itemView.findViewById(android.R.id.text1);
+            tvDate = itemView.findViewById(R.id.tvDate);
         }
     }
 }
