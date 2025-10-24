@@ -6,52 +6,51 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    tools:context=".LoginActivity">
+    tools:context=".TeacherRegisterActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="System Login"
+        android:text="Register New Teacher"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
-    <Spinner
-        android:id="@+id/spinnerRole"
+    <EditText
+        android:id="@+id/editTeacherName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp" />
+        android:hint="Teacher's Full Name" />
 
     <EditText
-        android:id="@+id/editLoginEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/editLoginPassword"
+        android:id="@+id/editTeacherEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Password"
+        android:hint="Teacher's Email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editTeacherPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Temporary Password"
         android:inputType="textPassword" />
 
+    <EditText
+        android:id="@+id/editGradeAssigned"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Grade Assigned (e.g., 5)"
+        android:inputType="number" />
+
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegisterTeacher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Login" />
-
-    <TextView
-        android:id="@+id/tvRegisterPrompt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="First time Admin? Register your school."
-        android:textColor="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:focusable="true" />
+        android:text="Register Teacher" />
 
 </LinearLayout>

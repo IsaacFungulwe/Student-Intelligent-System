@@ -1,54 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:background="#F3F4F6">
+    android:fillViewport="true">
 
-    <!-- Admin Title -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/admin_title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="20dp" />
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="#F3F4F6">
 
-    <!-- Name Input -->
-    <EditText
-        android:id="@+id/editStudentName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/student_name_hint"
-        android:layout_marginBottom="10dp"
-        android:contentDescription="@string/content_description_student_name" />
+        <!-- Admin Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
-    <!-- Grade Input -->
-    <EditText
-        android:id="@+id/editStudentGrade"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/student_grade_hint"
-        android:inputType="number"
-        android:layout_marginBottom="10dp"
-        android:contentDescription="@string/content_description_student_grade" />
+        <!-- Student Name Input -->
+        <EditText
+            android:id="@+id/editStudentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/student_name_hint"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="@string/content_description_student_name" />
 
-    <Button
-        android:id="@+id/btnAddStudent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#015380"
-        android:text="@string/add_student_button"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/content_description_add_student"/>
+        <!-- Student Age Input -->
+        <EditText
+            android:id="@+id/editStudentAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Age"
+            android:inputType="number"
+            android:layout_marginBottom="10dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewStudents"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        <!-- Student Grade Input -->
+        <EditText
+            android:id="@+id/editStudentGrade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/student_grade_hint"
+            android:inputType="number"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="@string/content_description_student_grade" />
 
-</LinearLayout>
+        <!-- Student Gender Input -->
+        <EditText
+            android:id="@+id/editStudentGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Gender"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Student Address Input -->
+        <EditText
+            android:id="@+id/editStudentAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Parent Name Input -->
+        <EditText
+            android:id="@+id/editParentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Parent Name"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Parent Email Input -->
+        <EditText
+            android:id="@+id/editParentEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Parent Email"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Parent Phone Input -->
+        <EditText
+            android:id="@+id/editParentPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Parent Phone"
+            android:inputType="phone"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnAddStudent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#015380"
+            android:text="@string/add_student_button"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/content_description_add_student"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewStudents"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</ScrollView>

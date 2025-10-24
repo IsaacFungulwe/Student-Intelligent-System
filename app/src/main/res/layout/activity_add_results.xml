@@ -4,54 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="16dp"
-    tools:context=".LoginActivity">
+    tools:context=".AddResultsActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="System Login"
+        android:text="Add/Update Results"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Student:"/>
+
     <Spinner
-        android:id="@+id/spinnerRole"
+        android:id="@+id/spinnerStudentsResults"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp" />
+        android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/editLoginEmail"
+        android:id="@+id/editSubject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"        android:inputType="textEmailAddress" />
+        android:layout_marginTop="16dp"
+        android:hint="Subject (e.g., Maths)" />
 
     <EditText
-        android:id="@+id/editLoginPassword"
+        android:id="@+id/editTerm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:hint="Term (e.g., Mid-Term 1)" />
+
+    <EditText
+        android:id="@+id/editMarks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Marks Obtained"
+        android:inputType="number" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnSubmitResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Login" />
-
-    <TextView
-        android:id="@+id/tvRegisterPrompt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="First time Admin? Register your school."
-        android:textColor="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:focusable="true" />
+        android:text="Submit Results" />
 
 </LinearLayout>

@@ -11,39 +11,55 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentIntelligentSystem">
-        <activity
-            android:name=".AdminDashBoard"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" /> <!-- User screen -->
-        <activity
-            android:name=".UserActivity"
-            android:exported="false" /> <!-- Login screen (launches first) -->
-        <activity
-            android:name=".ManageStudentsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CheckResultsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MarkRegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterStudentActivity"
-            android:exported="false" />
+
+        <!-- Launcher Activity: The first screen the user sees -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Admin screen -->
+        </activity>
+
+        <!-- Admin Role Activities -->
         <activity
-            android:name=".MainActivity"
+            android:name=".AdminRegisterActivity"
             android:exported="false" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ParentRegisterActivity"
+            android:exported="false" />
+
+        <!-- Teacher Role Activities -->
+        <activity
+            android:name=".TeacherDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StudentRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MarkAttendanceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddResultsActivity"
+            android:exported="false" />
+
+        <!-- Parent Role Activities -->
+        <activity
+            android:name=".ParentDashboardActivity"
+            android:exported="false" />
+
+        <!-- Shared Activities -->
+        <activity
+            android:name=".PostAnnouncementActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

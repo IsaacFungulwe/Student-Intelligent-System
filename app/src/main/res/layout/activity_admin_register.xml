@@ -4,33 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="16dp"
-    tools:context=".LoginActivity">
+    android:gravity="center"
+    tools:context=".AdminRegisterActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="System Login"
+        android:text="Admin Registration"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"/>
 
-    <Spinner
-        android:id="@+id/spinnerRole"
+    <EditText
+        android:id="@+id/editSchoolName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp" />
+        android:hint="School Name" />
 
     <EditText
-        android:id="@+id/editLoginEmail"
+        android:id="@+id/editDistrict"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"        android:inputType="textEmailAddress" />
+        android:layout_marginTop="8dp"
+        android:hint="District" />
 
     <EditText
-        android:id="@+id/editLoginPassword"
+        android:id="@+id/editSchoolEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="School Email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editAdminPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -38,20 +46,10 @@
         android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegisterAdmin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Login" />
-
-    <TextView
-        android:id="@+id/tvRegisterPrompt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="First time Admin? Register your school."
-        android:textColor="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:focusable="true" />
+        android:text="Register School" />
 
 </LinearLayout>

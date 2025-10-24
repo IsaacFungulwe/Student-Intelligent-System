@@ -3,7 +3,7 @@ package com.example.studentintelligentsystem;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class ManageStudentsActivity extends AppCompatActivity {
+public class StudentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

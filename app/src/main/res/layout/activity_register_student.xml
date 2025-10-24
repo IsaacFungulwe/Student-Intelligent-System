@@ -92,6 +92,22 @@
             android:hint="Parent's Phone Number"
             android:inputType="phone" />
 
+        <EditText
+            android:id="@+id/editParentPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/editConfirmParentPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Confirm Password"
+            android:inputType="textPassword" />
+
         <!-- Action Button -->
         <Button
             android:id="@+id/btnRegister"
