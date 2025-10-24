@@ -12,16 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentIntelligentSystem">
 
-        <!-- Launcher Activity: The first screen the user sees -->
-        <activity
-            android:name=".AttendanceHistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ViewAttendanceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DailyAttendanceDetailActivity"
-            android:exported="false" />
+        <!-- Launcher Activity -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -32,42 +23,25 @@
         </activity>
 
         <!-- Admin Role Activities -->
-        <activity
-            android:name=".AdminRegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AdminDashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TeacherRegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParentRegisterActivity"
-            android:exported="false" />
+        <activity android:name=".AdminRegisterActivity" android:exported="false" />
+        <activity android:name=".AdminDashboardActivity" android:exported="false" />
+        <activity android:name=".TeacherRegisterActivity" android:exported="false" />
+        <activity android:name=".ParentRegisterActivity" android:exported="false" />
 
         <!-- Teacher Role Activities -->
-        <activity
-            android:name=".TeacherDashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".StudentRegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MarkAttendanceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AddResultsActivity"
-            android:exported="false" />
+        <activity android:name=".TeacherDashboardActivity" android:exported="false" />
+        <activity android:name=".StudentRegisterActivity" android:exported="false" />
+        <activity android:name=".MarkAttendanceActivity" android:exported="false" />
+        <activity android:name=".AddResultsActivity" android:exported="false" />
 
         <!-- Parent Role Activities -->
-        <activity
-            android:name=".ParentDashboardActivity"
-            android:exported="false" />
+        <activity android:name=".ParentDashboardActivity" android:exported="false" />
 
-        <!-- Shared Activities -->
-        <activity
-            android:name=".PostAnnouncementActivity"
-            android:exported="false" />
+        <!-- Shared & New Activities -->
+        <activity android:name=".PostAnnouncementActivity" android:exported="false" />
+        <activity android:name=".AttendanceHistoryActivity" android:exported="false" />
+        <activity android:name=".ViewAttendanceActivity" android:exported="false" />
+        <activity android:name=".DailyAttendanceDetailActivity" android:exported="false" />
 
     </application>
 

@@ -115,21 +115,9 @@ public class MarkAttendanceActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherId = prefs.getInt(LoginActivity.KEY_USER_ID, -1);
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.ATTENDANCE_FK_STUDENT_ID, selectedStudentId);
-        values.put(DatabaseHelper.ATTENDANCE_DATE, date);
-        values.put(DatabaseHelper.ATTENDANCE_STATUS, status);
-        values.put(DatabaseHelper.ATTENDANCE_FK_TEACHER_ID, teacherId);
+        dbHelper.addAttendance(selectedStudentId, date, status.equals("Present"));
 
-        long newRowId = db.insert(DatabaseHelper.TABLE_ATTENDANCE, null, values);
-        db.close();
-
-        if (newRowId != -1) {
-            Toast.makeText(this, "Attendance marked successfully!", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Toast.makeText(this, "Error marking attendance.", Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(this, "Attendance marked successfully!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

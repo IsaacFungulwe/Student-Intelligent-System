@@ -6,56 +6,79 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "student_system.db";
-    private static final int DATABASE_VERSION = 4; // Incremented version
+    private static final String DATABASE_NAME = "StudentIntelligentSystem.db";
+    private static final int DATABASE_VERSION = 4;
 
-    // Tables
-    private static final String TABLE_STUDENTS = "students";
-    private static final String TABLE_ATTENDANCE = "attendance";
-    private static final String TABLE_RESULTS = "results";
-    private static final String TABLE_PARENTS = "parents";
-    private static final String TABLE_USERS = "users";
-    private static final String TABLE_ANNOUNCEMENTS = "announcements"; // New table
+    // Admin Table
+    public static final String TABLE_ADMIN = "Admin";
+    public static final String ADMIN_ID = "adminId";
+    public static final String ADMIN_SCHOOL_NAME = "schoolName";
+    public static final String ADMIN_DISTRICT = "district";
+    public static final String ADMIN_EMAIL = "schoolEmail";
+    public static final String ADMIN_PASSWORD = "password";
 
-    // Students columns
-    private static final String COL_STU_ID = "id";
-    private static final String COL_STU_NAME = "stu_name";
-    private static final String COL_STU_GRADE = "stu_grade";
-    private static final String COL_STU_AGE = "stu_age";
-    private static final String COL_STU_GENDER = "stu_gender";
-    private static final String COL_STU_PARENT_NAME = "stu_parent_name";
-    private static final String COL_STU_PARENT_EMAIL = "stu_parent_email";
-    private static final String COL_STU_PARENT_PHONE = "stu_parent_phone";
-    private static final String COL_STU_ADDRESS = "stu_address";
+    // Teacher Table
+    public static final String TABLE_TEACHER = "Teacher";
+    public static final String TEACHER_ID = "teacherId";
+    public static final String TEACHER_NAME = "name";
+    public static final String TEACHER_EMAIL = "email";
+    public static final String TEACHER_PASSWORD = "password";
+    public static final String TEACHER_GRADE_ASSIGNED = "gradeAssigned";
+    public static final String TEACHER_FK_ADMIN_ID = "linkedSchoolAdminId";
 
-    // Attendance columns
-    private static final String COL_ATT_ID = "id";
-    private static final String COL_ATT_STU_ID = "student_id";
-    private static final String COL_ATT_DATE = "date"; // TEXT yyyy-MM-dd
-    private static final String COL_ATT_PRESENT = "present"; // 0/1
+    // Parent Table
+    public static final String TABLE_PARENT = "Parent";
+    public static final String PARENT_ID = "parentId";
+    public static final String PARENT_NAME = "parentName";
+    public static final String PARENT_EMAIL = "parentEmail";
+    public static final String PARENT_PHONE = "parentPhone";
+    public static final String PARENT_PASSWORD = "password";
+    public static final String PARENT_FK_ADMIN_ID = "linkedSchoolAdminId";
 
-    // Results columns
-    private static final String COL_RES_ID = "id";
-    private static final String COL_RES_STU_ID = "student_id";
-    private static final String COL_RES_SUBJECT = "subject";
-    private static final String COL_RES_SCORE = "score";
+    // Student Table
+    public static final String TABLE_STUDENT = "Student";
+    public static final String STUDENT_ID = "studentId";
+    public static final String STUDENT_NAME = "studentName";
+    public static final String STUDENT_AGE = "age";
+    public static final String STUDENT_GENDER = "gender";
+    public static final String STUDENT_GRADE = "grade";
+    public static final String STUDENT_ADDRESS = "address";
+    public static final String STUDENT_FK_PARENT_ID = "linkedParentId";
+    public static final String STUDENT_FK_TEACHER_ID = "linkedTeacherId";
 
-    // Parents columns
-    private static final String COL_PARENT_ID = "id";
-    private static final String COL_PARENT_EMAIL = "email";
-    private static final String COL_PARENT_PASSWORD = "password";
+    // Attendance Table
+    public static final String TABLE_ATTENDANCE = "Attendance";
+    public static final String ATTENDANCE_ID = "attendanceId";
+    public static final String ATTENDANCE_FK_STUDENT_ID = "studentId";
+    public static final String ATTENDANCE_DATE = "date";
+    public static final String ATTENDANCE_STATUS = "status";
+    public static final String ATTENDANCE_FK_TEACHER_ID = "markedByTeacherId";
 
-    // Users columns (optional)
-    private static final String COL_USERNAME = "username";
-    private static final String COL_USER_PASSWORD = "password";
+    // Results Table
+    public static final String TABLE_RESULTS = "Results";
+    public static final String RESULT_ID = "resultId";
+    public static final String RESULT_FK_STUDENT_ID = "studentId";
+    public static final String RESULT_SUBJECT = "subject";
+    public static final String RESULT_TERM = "term";
+    public static final String RESULT_MARKS = "marks";
+    public static final String RESULT_FK_TEACHER_ID = "recordedByTeacherId";
 
-    // Announcements columns
-    private static final String COL_ANN_ID = "id";
-    private static final String COL_ANN_TITLE = "title";
-    private static final String COL_ANN_BODY = "body";
-    private static final String COL_ANN_DATE = "date";
+    // Announcement Table
+    public static final String TABLE_ANNOUNCEMENT = "Announcement";
+    public static final String ANNOUNCEMENT_ID = "announcementId";
+    public static final String ANNOUNCEMENT_TITLE = "title";
+    public static final String ANNOUNCEMENT_MESSAGE = "message";
+    public static final String ANNOUNCEMENT_ROLE = "createdByRole";
+    public static final String ANNOUNCEMENT_FK_CREATOR_ID = "createdById";
+    public static final String ANNOUNCEMENT_GRADE_TARGET = "gradeTarget";
+    public static final String ANNOUNCEMENT_TIMESTAMP = "timestamp";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -63,257 +86,166 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Students table
-        String createStudents = "CREATE TABLE " + TABLE_STUDENTS + " (" +
-                COL_STU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_STU_NAME + " TEXT, " +
-                COL_STU_GRADE + " INTEGER, " +
-                COL_STU_AGE + " INTEGER, " +
-                COL_STU_GENDER + " TEXT, " +
-                COL_STU_PARENT_NAME + " TEXT, " +
-                COL_STU_PARENT_EMAIL + " TEXT, " +
-                COL_STU_PARENT_PHONE + " TEXT, " +
-                COL_STU_ADDRESS + " TEXT)";
-        db.execSQL(createStudents);
+        final String CREATE_ADMIN_TABLE = "CREATE TABLE " + TABLE_ADMIN + "(" +
+                ADMIN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ADMIN_SCHOOL_NAME + " TEXT NOT NULL," + ADMIN_DISTRICT + " TEXT NOT NULL," +
+                ADMIN_EMAIL + " TEXT NOT NULL UNIQUE," + ADMIN_PASSWORD + " TEXT NOT NULL);";
 
-        // Attendance table
-        String createAttendance = "CREATE TABLE " + TABLE_ATTENDANCE + " (" +
-                COL_ATT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_ATT_STU_ID + " INTEGER, " +
-                COL_ATT_DATE + " TEXT, " +
-                COL_ATT_PRESENT + " INTEGER, " +
-                "FOREIGN KEY(" + COL_ATT_STU_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + COL_STU_ID + "))";
-        db.execSQL(createAttendance);
+        final String CREATE_TEACHER_TABLE = "CREATE TABLE " + TABLE_TEACHER + "(" +
+                TEACHER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                TEACHER_NAME + " TEXT NOT NULL," + TEACHER_EMAIL + " TEXT NOT NULL UNIQUE," +
+                TEACHER_PASSWORD + " TEXT NOT NULL," + TEACHER_GRADE_ASSIGNED + " INTEGER NOT NULL," +
+                TEACHER_FK_ADMIN_ID + " INTEGER NOT NULL, FOREIGN KEY(" + TEACHER_FK_ADMIN_ID + ") REFERENCES " + TABLE_ADMIN + "(" + ADMIN_ID + "));";
 
-        // Results table
-        String createResults = "CREATE TABLE " + TABLE_RESULTS + " (" +
-                COL_RES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_RES_STU_ID + " INTEGER, " +
-                COL_RES_SUBJECT + " TEXT, " +
-                COL_RES_SCORE + " INTEGER, " +
-                "FOREIGN KEY(" + COL_RES_STU_ID + ") REFERENCES " + TABLE_STUDENTS + "(" + COL_STU_ID + "))";
-        db.execSQL(createResults);
+        final String CREATE_PARENT_TABLE = "CREATE TABLE " + TABLE_PARENT + "(" +
+                PARENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PARENT_NAME + " TEXT NOT NULL," + PARENT_EMAIL + " TEXT NOT NULL UNIQUE," +
+                PARENT_PHONE + " TEXT," + PARENT_PASSWORD + " TEXT NOT NULL," +
+                PARENT_FK_ADMIN_ID + " INTEGER NOT NULL, FOREIGN KEY(" + PARENT_FK_ADMIN_ID + ") REFERENCES " + TABLE_ADMIN + "(" + ADMIN_ID + "));";
 
-        // Parents table
-        String createParents = "CREATE TABLE " + TABLE_PARENTS + " (" +
-                COL_PARENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_PARENT_EMAIL + " TEXT UNIQUE, " +
-                COL_PARENT_PASSWORD + " TEXT)";
-        db.execSQL(createParents);
+        final String CREATE_STUDENT_TABLE = "CREATE TABLE " + TABLE_STUDENT + "(" +
+                STUDENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                STUDENT_NAME + " TEXT NOT NULL," + STUDENT_AGE + " INTEGER," +
+                STUDENT_GENDER + " TEXT," + STUDENT_GRADE + " INTEGER NOT NULL," +
+                STUDENT_ADDRESS + " TEXT," + STUDENT_FK_PARENT_ID + " INTEGER NOT NULL," +
+                STUDENT_FK_TEACHER_ID + " INTEGER NOT NULL," +
+                "FOREIGN KEY(" + STUDENT_FK_PARENT_ID + ") REFERENCES " + TABLE_PARENT + "(" + PARENT_ID + ")," +
+                "FOREIGN KEY(" + STUDENT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "));";
 
-        // Users table (optional)
-        String createUsers = "CREATE TABLE " + TABLE_USERS + " (" +
-                COL_USERNAME + " TEXT PRIMARY KEY, " +
-                COL_USER_PASSWORD + " TEXT)";
-        db.execSQL(createUsers);
+        final String CREATE_ATTENDANCE_TABLE = "CREATE TABLE " + TABLE_ATTENDANCE + "(" +
+                ATTENDANCE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ATTENDANCE_FK_STUDENT_ID + " INTEGER NOT NULL," + ATTENDANCE_DATE + " TEXT NOT NULL," +
+                ATTENDANCE_STATUS + " TEXT NOT NULL," + ATTENDANCE_FK_TEACHER_ID + " INTEGER NOT NULL," +
+                "FOREIGN KEY(" + ATTENDANCE_FK_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + ")," +
+                "FOREIGN KEY(" + ATTENDANCE_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "));";
 
-        // Announcements table
-        String createAnnouncements = "CREATE TABLE " + TABLE_ANNOUNCEMENTS + " (" +
-                COL_ANN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_ANN_TITLE + " TEXT, " +
-                COL_ANN_BODY + " TEXT, " +
-                COL_ANN_DATE + " TEXT)";
-        db.execSQL(createAnnouncements);
+        final String CREATE_RESULTS_TABLE = "CREATE TABLE " + TABLE_RESULTS + "(" +
+                RESULT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                RESULT_FK_STUDENT_ID + " INTEGER NOT NULL," + RESULT_SUBJECT + " TEXT NOT NULL," +
+                RESULT_TERM + " TEXT NOT NULL," + RESULT_MARKS + " INTEGER NOT NULL," +
+                RESULT_FK_TEACHER_ID + " INTEGER NOT NULL," +
+                "FOREIGN KEY(" + RESULT_FK_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + ")," +
+                "FOREIGN KEY(" + RESULT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "));";
+
+        final String CREATE_ANNOUNCEMENT_TABLE = "CREATE TABLE " + TABLE_ANNOUNCEMENT + "(" +
+                ANNOUNCEMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ANNOUNCEMENT_TITLE + " TEXT NOT NULL," + ANNOUNCEMENT_MESSAGE + " TEXT NOT NULL," +
+                ANNOUNCEMENT_ROLE + " TEXT NOT NULL," + ANNOUNCEMENT_FK_CREATOR_ID + " INTEGER NOT NULL," +
+                ANNOUNCEMENT_GRADE_TARGET + " INTEGER," + ANNOUNCEMENT_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP);";
+
+        db.execSQL(CREATE_ADMIN_TABLE);
+        db.execSQL(CREATE_TEACHER_TABLE);
+        db.execSQL(CREATE_PARENT_TABLE);
+        db.execSQL(CREATE_STUDENT_TABLE);
+        db.execSQL(CREATE_ATTENDANCE_TABLE);
+        db.execSQL(CREATE_RESULTS_TABLE);
+        db.execSQL(CREATE_ANNOUNCEMENT_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 4) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANNOUNCEMENTS);
-            onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANNOUNCEMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADMIN);
+        onCreate(db);
+    }
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return String.valueOf(password.hashCode());
         }
     }
 
-    // ... existing methods
-
-    // ------------------------------
-    // ANNOUNCEMENT METHODS
-    // ------------------------------
-
-    public boolean addAnnouncement(String title, String body, String date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_ANN_TITLE, title);
-        cv.put(COL_ANN_BODY, body);
-        cv.put(COL_ANN_DATE, date);
-        long result = db.insert(TABLE_ANNOUNCEMENTS, null, cv);
-        return result != -1;
-    }
-
-    public Cursor getAllAnnouncements() {
+    public Cursor checkLogin(String email, String password, String role) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_ANNOUNCEMENTS, null, null, null, null, null, COL_ANN_DATE + " DESC");
-    }
-    
-    // ... rest of the existing methods ...
-
-    // STUDENT METHODS
-
-    // Add student and return ID
-    public long addStudentAndGetId(Student student) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_STU_NAME, student.getName());
-        cv.put(COL_STU_GRADE, student.getGrade());
-        cv.put(COL_STU_AGE, student.getAge());
-        cv.put(COL_STU_GENDER, student.getGender());
-        cv.put(COL_STU_PARENT_NAME, student.getParentName());
-        cv.put(COL_STU_PARENT_EMAIL, student.getParentEmail());
-        cv.put(COL_STU_PARENT_PHONE, student.getParentPhone());
-        cv.put(COL_STU_ADDRESS, student.getAddress());
-        long newId = db.insert(TABLE_STUDENTS, null, cv);
-        db.close();
-        return newId;
+        String tableName, emailColumn, passwordColumn;
+        switch (role) {
+            case "Admin":
+                tableName = TABLE_ADMIN; emailColumn = ADMIN_EMAIL; passwordColumn = ADMIN_PASSWORD; break;
+            case "Teacher":
+                tableName = TABLE_TEACHER; emailColumn = TEACHER_EMAIL; passwordColumn = TEACHER_PASSWORD; break;
+            case "Parent":
+                tableName = TABLE_PARENT; emailColumn = PARENT_EMAIL; passwordColumn = PARENT_PASSWORD; break;
+            default: return null;
+        }
+        String hashedPassword = hashPassword(password);
+        return db.query(tableName, null, emailColumn + " = ? AND " + passwordColumn + " = ?", new String[]{email, hashedPassword}, null, null, null);
     }
 
-    public Cursor getStudentByParentEmail(String parentEmail) {
+    public List<Student> getAllStudents() {
+        List<Student> studentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_STUDENTS, null, COL_STU_PARENT_EMAIL + "=?", new String[]{parentEmail}, null, null, null);
-    }
-
-    public boolean updateStudent(Student student) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_STU_NAME, student.getName());
-        cv.put(COL_STU_GRADE, student.getGrade());
-        cv.put(COL_STU_AGE, student.getAge());
-        cv.put(COL_STU_GENDER, student.getGender());
-        cv.put(COL_STU_PARENT_NAME, student.getParentName());
-        cv.put(COL_STU_PARENT_EMAIL, student.getParentEmail());
-        cv.put(COL_STU_PARENT_PHONE, student.getParentPhone());
-        cv.put(COL_STU_ADDRESS, student.getAddress());
-        int rows = db.update(TABLE_STUDENTS, cv, COL_STU_ID + "=?", new String[]{String.valueOf(student.getId())});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STUDENT, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Student student = new Student();
+                student.setId(cursor.getInt(cursor.getColumnIndexOrThrow(STUDENT_ID)));
+                student.setName(cursor.getString(cursor.getColumnIndexOrThrow(STUDENT_NAME)));
+                student.setGrade(cursor.getInt(cursor.getColumnIndexOrThrow(STUDENT_GRADE)));
+                studentList.add(student);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
         db.close();
-        return rows > 0;
-    }
-
-    public boolean deleteStudent(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int rows = db.delete(TABLE_STUDENTS, COL_STU_ID + "=?", new String[]{String.valueOf(id)});
-        db.close();
-        return rows > 0;
-    }
-
-    public Cursor getAllStudents() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_STUDENTS, null, null, null, null, null, COL_STU_NAME + " ASC");
-    }
-
-    // ------------------------------
-    // ATTENDANCE METHODS
-    // ------------------------------
-
-    public boolean addAttendance(int studentId, String dateIso, boolean present) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_ATT_STU_ID, studentId);
-        cv.put(COL_ATT_DATE, dateIso);
-        cv.put(COL_ATT_PRESENT, present ? 1 : 0);
-        long res = db.insert(TABLE_ATTENDANCE, null, cv);
-        db.close();
-        return res != -1;
+        return studentList;
     }
 
     public Cursor getAttendanceForStudent(int studentId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_ATTENDANCE, null, COL_ATT_STU_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, COL_ATT_DATE + " DESC");
+        return db.query(TABLE_ATTENDANCE, null, ATTENDANCE_FK_STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, ATTENDANCE_DATE + " DESC");
     }
-
-    // ------------------------------
-    // RESULTS METHODS
-    // ------------------------------
-
-    public boolean addOrUpdateResult(int studentId, String subject, int score) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_RES_SCORE, score);
-        int rows = db.update(TABLE_RESULTS, cv, COL_RES_STU_ID + "=? AND " + COL_RES_SUBJECT + "=?",
-                new String[]{String.valueOf(studentId), subject});
-        if (rows > 0) {
-            db.close();
-            return true;
-        }
-        ContentValues insert = new ContentValues();
-        insert.put(COL_RES_STU_ID, studentId);
-        insert.put(COL_RES_SUBJECT, subject);
-        insert.put(COL_RES_SCORE, score);
-        long res = db.insert(TABLE_RESULTS, null, insert);
-        db.close();
-        return res != -1;
-    }
-
+    
     public Cursor getResultsForStudent(int studentId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
-                " FROM " + TABLE_RESULTS + " r LEFT JOIN " + TABLE_STUDENTS + " s ON r." + COL_RES_STU_ID + " = s." + COL_STU_ID +
-                " WHERE r." + COL_RES_STU_ID + "=?";
-        return db.rawQuery(query, new String[]{String.valueOf(studentId)});
+        return db.query(TABLE_RESULTS, null, RESULT_FK_STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, null);
     }
 
-    public Cursor getAllResults() {
+    public Cursor getAllAnnouncements() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
-                " FROM " + TABLE_RESULTS + " r LEFT JOIN " + TABLE_STUDENTS + " s ON r." + COL_RES_STU_ID + " = s." + COL_STU_ID +
-                " ORDER BY r." + COL_RES_ID + " DESC";
-        return db.rawQuery(query, null);
+        return db.query(TABLE_ANNOUNCEMENT, null, null, null, null, null, ANNOUNCEMENT_TIMESTAMP + " DESC");
     }
 
-    // ------------------------------
-    // PARENT METHODS
-    // ------------------------------
-
-    public boolean addParent(String email, String password) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_PARENT_EMAIL, email);
-        cv.put(COL_PARENT_PASSWORD, password);
-        long result = db.insert(TABLE_PARENTS, null, cv);
-        db.close();
-        return result != -1;
-    }
-
-    public boolean validateParent(String email, String password) {
+    public List<String> getUniqueAttendanceDates() {
+        List<String> dates = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PARENTS, new String[]{COL_PARENT_EMAIL},
-                COL_PARENT_EMAIL + "=? AND " + COL_PARENT_PASSWORD + "=?", new String[]{email, password},
-                null, null, null);
-        boolean valid = cursor.moveToFirst();
-        cursor.close();
+        Cursor cursor = db.query(true, TABLE_ATTENDANCE, new String[]{ATTENDANCE_DATE}, null, null, null, null, ATTENDANCE_DATE + " DESC", null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                dates.add(cursor.getString(cursor.getColumnIndexOrThrow(ATTENDANCE_DATE)));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
         db.close();
-        return valid;
+        return dates;
     }
 
-    // ------------------------------
-    // USER METHODS (optional)
-    // ------------------------------
-
-    public boolean registerUser(String username, String password) {
-        if (checkUserExists(username)) return false;
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_USERNAME, username);
-        cv.put(COL_USER_PASSWORD, password);
-        long result = db.insert(TABLE_USERS, null, cv);
-        db.close();
-        return result != -1;
-    }
-
-    private boolean checkUserExists(String username) {
+    public Cursor getAttendanceByDate(String date) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COL_USERNAME},
-                COL_USERNAME + "=?", new String[]{username}, null, null, null);
-        boolean exists = cursor.moveToFirst();
-        cursor.close();
-        return exists;
+        String query = "SELECT s." + STUDENT_NAME + ", a." + ATTENDANCE_STATUS + " FROM " + TABLE_STUDENT + " s LEFT JOIN " + TABLE_ATTENDANCE + " a ON s." + STUDENT_ID + " = a." + ATTENDANCE_FK_STUDENT_ID + " AND a." + ATTENDANCE_DATE + " = ?";
+        return db.rawQuery(query, new String[]{date});
     }
-
-    public boolean checkUser(String username, String password) {
+     public void addAttendance(Integer studentId, String date, boolean isPresent) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COL_USERNAME},
-                COL_USERNAME + "=? AND " + COL_USER_PASSWORD + "=?", new String[]{username, password}, null, null, null);
-        boolean valid = cursor.moveToFirst();
-        cursor.close();
+        ContentValues values = new ContentValues();
+        values.put(ATTENDANCE_FK_STUDENT_ID, studentId);
+        values.put(ATTENDANCE_DATE, date);
+        values.put(ATTENDANCE_STATUS, isPresent ? "Present" : "Absent");
+        db.insert(TABLE_ATTENDANCE, null, values);
         db.close();
-        return valid;
     }
 }

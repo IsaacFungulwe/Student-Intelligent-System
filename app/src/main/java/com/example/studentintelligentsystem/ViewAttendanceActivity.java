@@ -1,6 +1,5 @@
 package com.example.studentintelligentsystem;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,17 +30,7 @@ public class ViewAttendanceActivity extends AppCompatActivity {
     }
 
     private void loadAttendanceDates() {
-        Cursor cursor = dbHelper.getUniqueAttendanceDates();
-
-        if (cursor != null) {
-            int dateIndex = cursor.getColumnIndex("date");
-            while (cursor.moveToNext()) {
-                if (dateIndex != -1) {
-                    dateList.add(cursor.getString(dateIndex));
-                }
-            }
-            cursor.close();
-        }
+        dateList = dbHelper.getUniqueAttendanceDates();
 
         adapter = new DateAdapter(dateList);
         rvAttendanceDates.setAdapter(adapter);
