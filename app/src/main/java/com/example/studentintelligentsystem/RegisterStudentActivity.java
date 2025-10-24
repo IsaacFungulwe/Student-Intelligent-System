@@ -73,8 +73,8 @@ public class RegisterStudentActivity extends AppCompatActivity {
         String parentPhone = editParentPhone.getText().toString().trim();
 
         // --- 2. Validate Input ---
-        if (name.isEmpty() || ageStr.isEmpty() || gradeStr.isEmpty() || parentName.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields (Name, Age, Grade, Parent Name).", Toast.LENGTH_LONG).show();
+        if (name.isEmpty() || ageStr.isEmpty() || gradeStr.isEmpty() || parentName.isEmpty() || parentEmail.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields (Name, Age, Grade, Parent Name, Parent Email).", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -89,29 +89,27 @@ public class RegisterStudentActivity extends AppCompatActivity {
         }
 
         // --- 3. Create Student Object ---
-        // Note: The Student constructor doesn't need an ID, as it will be auto-generated.
         Student newStudent = new Student(name, grade, age, gender, parentName, parentEmail, parentPhone, address);
 
         // --- 4. Save to Database and Get the New ID ---
-        // Use the new method that returns the generated ID
         long newStudentId = dbHelper.addStudentAndGetId(newStudent);
 
-        // --- 5. Update UI with the result ---
+        // --- 5. Update UI with the result and Create Parent Login ---
         if (newStudentId != -1) {
-            // Success! Display the new ID.
+            // Student registration was successful
             Toast.makeText(this, "Student registered successfully!", Toast.LENGTH_SHORT).show();
 
-            // Update the TextView and make the layout visible
             tvGeneratedId.setText("The new Student ID is: " + newStudentId);
             layoutGeneratedId.setVisibility(View.VISIBLE);
 
-            // Optional: Clear all input fields for the next entry
+            // Create a parent login with the default password "1234"
+            dbHelper.addParent(parentEmail, "1234");
+
             clearForm();
 
         } else {
             // Failure
             Toast.makeText(this, "Error: Could not register student.", Toast.LENGTH_LONG).show();
-            // Ensure the generated ID layout is hidden on failure
             layoutGeneratedId.setVisibility(View.GONE);
         }
     }

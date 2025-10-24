@@ -12,6 +12,8 @@ public class Student {
     private String parentPhone;
     private String address;
 
+    public Student() {}
+
     public Student(String name, int grade, int age, String gender, String parentName, String parentEmail, String parentPhone, String address) {
         this.name = name;
         this.grade = grade;
@@ -63,5 +65,41 @@ public class Student {
 
     public String getAddress() {
         return address;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public void setParentEmail(String parentEmail) {
+        this.parentEmail = parentEmail;
+    }
+
+    public void setParentPhone(String parentPhone) {
+        this.parentPhone = parentPhone;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

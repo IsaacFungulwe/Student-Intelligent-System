@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "student_system.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4; // Incremented version
 
     // Tables
     private static final String TABLE_STUDENTS = "students";
@@ -17,6 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_RESULTS = "results";
     private static final String TABLE_PARENTS = "parents";
     private static final String TABLE_USERS = "users";
+    private static final String TABLE_ANNOUNCEMENTS = "announcements"; // New table
 
     // Students columns
     private static final String COL_STU_ID = "id";
@@ -49,6 +50,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Users columns (optional)
     private static final String COL_USERNAME = "username";
     private static final String COL_USER_PASSWORD = "password";
+
+    // Announcements columns
+    private static final String COL_ANN_ID = "id";
+    private static final String COL_ANN_TITLE = "title";
+    private static final String COL_ANN_BODY = "body";
+    private static final String COL_ANN_DATE = "date";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -99,21 +106,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_USERNAME + " TEXT PRIMARY KEY, " +
                 COL_USER_PASSWORD + " TEXT)";
         db.execSQL(createUsers);
+
+        // Announcements table
+        String createAnnouncements = "CREATE TABLE " + TABLE_ANNOUNCEMENTS + " (" +
+                COL_ANN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_ANN_TITLE + " TEXT, " +
+                COL_ANN_BODY + " TEXT, " +
+                COL_ANN_DATE + " TEXT)";
+        db.execSQL(createAnnouncements);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESULTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        onCreate(db);
+        if (oldVersion < 4) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANNOUNCEMENTS);
+            onCreate(db);
+        }
     }
 
+    // ... existing methods
+
     // ------------------------------
+    // ANNOUNCEMENT METHODS
+    // ------------------------------
+
+    public boolean addAnnouncement(String title, String body, String date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COL_ANN_TITLE, title);
+        cv.put(COL_ANN_BODY, body);
+        cv.put(COL_ANN_DATE, date);
+        long result = db.insert(TABLE_ANNOUNCEMENTS, null, cv);
+        return result != -1;
+    }
+
+    public Cursor getAllAnnouncements() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_ANNOUNCEMENTS, null, null, null, null, null, COL_ANN_DATE + " DESC");
+    }
+    
+    // ... rest of the existing methods ...
+
     // STUDENT METHODS
-    // ------------------------------
 
     // Add student and return ID
     public long addStudentAndGetId(Student student) {
@@ -130,6 +164,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long newId = db.insert(TABLE_STUDENTS, null, cv);
         db.close();
         return newId;
+    }
+
+    public Cursor getStudentByParentEmail(String parentEmail) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_STUDENTS, null, COL_STU_PARENT_EMAIL + "=?", new String[]{parentEmail}, null, null, null);
     }
 
     public boolean updateStudent(Student student) {
@@ -203,6 +242,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res != -1;
     }
 
+    public Cursor getResultsForStudent(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
+                " FROM " + TABLE_RESULTS + " r LEFT JOIN " + TABLE_STUDENTS + " s ON r." + COL_RES_STU_ID + " = s." + COL_STU_ID +
+                " WHERE r." + COL_RES_STU_ID + "=?";
+        return db.rawQuery(query, new String[]{String.valueOf(studentId)});
+    }
+
     public Cursor getAllResults() {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT r." + COL_RES_ID + " as _id, r." + COL_RES_STU_ID + ", s." + COL_STU_NAME + ", r." + COL_RES_SUBJECT + ", r." + COL_RES_SCORE +
@@ -261,7 +308,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean checkUser(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(TABLE_USERS, new String[]{COL_USERNAME},
                 COL_USERNAME + "=? AND " + COL_USER_PASSWORD + "=?", new String[]{username, password}, null, null, null);
         boolean valid = cursor.moveToFirst();
