@@ -1,33 +1,32 @@
 package com.example.studentintelligentsystem;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MarkRegisterActivity extends AppCompatActivity {
 
-    private Spinner spinnerStudents;
+    private RecyclerView rvStudentAttendance;
     private EditText editDate;
-    private CheckBox cbPresent;
-    private Button btnMark;
+    private Button btnMark, btnViewAttendance;
     private DatabaseHelper db;
-
-    // Map to hold student name -> ID
-    private HashMap<String, Integer> studentMap = new HashMap<>();
+    private StudentAttendanceAdapter adapter;
+    private List<Student> studentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,58 +35,73 @@ public class MarkRegisterActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
-        spinnerStudents = findViewById(R.id.spinnerStudents);
+        rvStudentAttendance = findViewById(R.id.rvStudentAttendance);
         editDate = findViewById(R.id.editDate);
-        cbPresent = findViewById(R.id.cbPresent);
         btnMark = findViewById(R.id.btnMark);
+        btnViewAttendance = findViewById(R.id.btnViewAttendance);
+
+        rvStudentAttendance.setLayoutManager(new LinearLayoutManager(this));
 
         // Default date to today
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
         editDate.setText(today);
 
-        loadStudentsIntoSpinner();
+        loadStudents();
 
-        btnMark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String selectedStudent = spinnerStudents.getSelectedItem().toString();
-                Integer studentId = studentMap.get(selectedStudent);
-                String date = editDate.getText().toString().trim();
-                boolean present = cbPresent.isChecked();
+        btnMark.setOnClickListener(v -> markAttendance());
 
-                if (studentId == null) {
-                    Toast.makeText(MarkRegisterActivity.this, "No student selected", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (date.isEmpty()) {
-                    Toast.makeText(MarkRegisterActivity.this, "Date cannot be empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                boolean ok = db.addAttendance(studentId, date, present);
-                if (ok) {
-                    Toast.makeText(MarkRegisterActivity.this, "Attendance marked for " + selectedStudent, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MarkRegisterActivity.this, "Error marking attendance", Toast.LENGTH_SHORT).show();
-                }
+        btnViewAttendance.setOnClickListener(v -> {
+            String date = editDate.getText().toString().trim();
+            if (date.isEmpty()) {
+                Toast.makeText(this, "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Intent intent = new Intent(this, ViewAttendanceActivity.class);
+            intent.putExtra(ViewAttendanceActivity.EXTRA_DATE, date);
+            startActivity(intent);
         });
     }
 
-    private void loadStudentsIntoSpinner() {
+    private void loadStudents() {
         Cursor cursor = db.getAllStudents();
-        ArrayList<String> studentNames = new ArrayList<>();
         if (cursor != null) {
+            int idIndex = cursor.getColumnIndex("id");
+            int nameIndex = cursor.getColumnIndex("stu_name");
+            int gradeIndex = cursor.getColumnIndex("stu_grade");
+
             while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow("stu_name"));
-                studentNames.add(name);
-                studentMap.put(name, id);
+                if (idIndex != -1 && nameIndex != -1 && gradeIndex != -1) {
+                    long id = cursor.getLong(idIndex);
+                    String name = cursor.getString(nameIndex);
+                    int grade = cursor.getInt(gradeIndex);
+                    studentList.add(new Student(id, name, grade));
+                }
             }
             cursor.close();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, studentNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerStudents.setAdapter(adapter);
+
+        adapter = new StudentAttendanceAdapter(studentList);
+        rvStudentAttendance.setAdapter(adapter);
+    }
+
+    private void markAttendance() {
+        String date = editDate.getText().toString().trim();
+        if (date.isEmpty()) {
+            Toast.makeText(this, "Date cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<Long, Boolean> attendanceStatus = adapter.getAttendanceStatus();
+        int successCount = 0;
+
+        for (Map.Entry<Long, Boolean> entry : attendanceStatus.entrySet()) {
+            long studentId = entry.getKey();
+            boolean isPresent = entry.getValue();
+            if (db.addAttendance((int) studentId, date, isPresent)) {
+                successCount++;
+            }
+        }
+
+        Toast.makeText(this, "Attendance marked for " + successCount + " students.", Toast.LENGTH_SHORT).show();
     }
 }

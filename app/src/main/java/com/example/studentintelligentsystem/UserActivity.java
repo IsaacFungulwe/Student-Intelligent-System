@@ -63,10 +63,8 @@ public class UserActivity extends AppCompatActivity {
 
     private void loadAttendanceData(int studentId) {
         Cursor attendanceCursor = db.getAttendanceForStudent(studentId);
-        int totalDays = 0;
         int presentDays = 0;
         if (attendanceCursor != null && attendanceCursor.moveToFirst()) {
-            totalDays = attendanceCursor.getCount();
             do {
                 int present = attendanceCursor.getInt(attendanceCursor.getColumnIndexOrThrow("present"));
                 if (present == 1) {
@@ -76,14 +74,9 @@ public class UserActivity extends AppCompatActivity {
             attendanceCursor.close();
         }
 
-        if (totalDays > 0) {
-            int attendancePercentage = (int) (((double) presentDays / totalDays) * 100);
-            pbAttendance.setProgress(attendancePercentage);
-            tvAttendancePercentage.setText(attendancePercentage + "% Present");
-        } else {
-            pbAttendance.setProgress(0);
-            tvAttendancePercentage.setText("No attendance data");
-        }
+        int attendancePercentage = (int) (((double) presentDays / 65) * 100);
+        pbAttendance.setProgress(attendancePercentage);
+        tvAttendancePercentage.setText(attendancePercentage + "% Present");
     }
 
     private void loadResultsData(int studentId) {

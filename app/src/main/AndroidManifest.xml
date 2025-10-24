@@ -33,6 +33,15 @@
             android:name=".RegisterStudentActivity"
             android:exported="false" />
         <activity
+            android:name=".AttendanceHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewAttendanceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DailyAttendanceDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>

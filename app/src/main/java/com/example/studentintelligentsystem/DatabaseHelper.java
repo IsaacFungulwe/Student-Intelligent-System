@@ -219,6 +219,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.query(TABLE_ATTENDANCE, null, COL_ATT_STU_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, COL_ATT_DATE + " DESC");
     }
 
+    public Cursor getAttendanceByDate(String date) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT s." + COL_STU_NAME + ", a." + COL_ATT_PRESENT + " FROM " + TABLE_ATTENDANCE + " a JOIN " + TABLE_STUDENTS + " s ON a." + COL_ATT_STU_ID + " = s." + COL_STU_ID + " WHERE a." + COL_ATT_DATE + " = ?";
+        return db.rawQuery(query, new String[]{date});
+    }
+
+    public Cursor getUniqueAttendanceDates() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(true, TABLE_ATTENDANCE, new String[]{COL_ATT_DATE}, null, null, null, null, COL_ATT_DATE + " DESC", null);
+    }
+
     // ------------------------------
     // RESULTS METHODS
     // ------------------------------
