@@ -1,20 +1,17 @@
 package com.example.studentintelligentsystem;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +24,7 @@ import java.util.Locale;
 
 public class MarkAttendanceActivity extends AppCompatActivity {
 
-    private Spinner spinnerStudents;
+    private AutoCompleteTextView spinnerStudents;
     private EditText editAttendanceDate;
     private RadioGroup rgAttendanceStatus;
     private Button btnSubmitAttendance;
@@ -48,21 +45,13 @@ public class MarkAttendanceActivity extends AppCompatActivity {
         rgAttendanceStatus = findViewById(R.id.rgAttendanceStatus);
         btnSubmitAttendance = findViewById(R.id.btnSubmitAttendance);
 
-        // Set current date as default
         editAttendanceDate.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
 
         loadStudentsForTeacher();
 
-        spinnerStudents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedName = parent.getItemAtPosition(position).toString();
-                selectedStudentId = studentMap.get(selectedName);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedStudentId = -1;
-            }
+        spinnerStudents.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedName = (String) parent.getItemAtPosition(position);
+            selectedStudentId = studentMap.get(selectedName);
         });
 
         btnSubmitAttendance.setOnClickListener(v -> markAttendance());
@@ -75,13 +64,7 @@ public class MarkAttendanceActivity extends AppCompatActivity {
         if (teacherGrade == -1) return;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(
-                DatabaseHelper.TABLE_STUDENT,
-                new String[]{DatabaseHelper.STUDENT_ID, DatabaseHelper.STUDENT_NAME},
-                DatabaseHelper.STUDENT_GRADE + " = ?",
-                new String[]{String.valueOf(teacherGrade)},
-                null, null, null
-        );
+        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT, new String[]{DatabaseHelper.STUDENT_ID, DatabaseHelper.STUDENT_NAME}, DatabaseHelper.STUDENT_GRADE + " = ?", new String[]{String.valueOf(teacherGrade)}, null, null, null);
 
         ArrayList<String> studentNames = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -95,8 +78,7 @@ public class MarkAttendanceActivity extends AppCompatActivity {
         }
         db.close();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, studentNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, studentNames);
         spinnerStudents.setAdapter(adapter);
     }
 
@@ -110,7 +92,7 @@ public class MarkAttendanceActivity extends AppCompatActivity {
         }
 
         RadioButton selectedRadioButton = findViewById(selectedStatusId);
-        String status = selectedRadioButton.getText().toString(); // "Present" or "Absent"
+        String status = selectedRadioButton.getText().toString();
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherId = prefs.getInt(LoginActivity.KEY_USER_ID, -1);

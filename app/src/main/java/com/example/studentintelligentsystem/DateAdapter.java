@@ -1,54 +1,49 @@
 package com.example.studentintelligentsystem;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
-public class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
+public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder> {
 
-    private final List<String> dates;
+    private final List<String> dateList;
 
-    public DateAdapter(List<String> dates) {
-        this.dates = dates;
+    public DateAdapter(List<String> dateList) {
+        this.dateList = dateList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_date, parent, false);
-        return new ViewHolder(view);
+        return new DateViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String date = dates.get(position);
+    public void onBindViewHolder(@NonNull DateViewHolder holder, int position) {
+        String date = dateList.get(position);
         holder.tvDate.setText(date);
-
         holder.itemView.setOnClickListener(v -> {
-            Context context = v.getContext();
-            Intent intent = new Intent(context, DailyAttendanceDetailActivity.class);
+            Intent intent = new Intent(v.getContext(), DailyAttendanceDetailActivity.class);
             intent.putExtra(DailyAttendanceDetailActivity.EXTRA_DATE, date);
-            context.startActivity(intent);
+            v.getContext().startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return dates.size();
+        return dateList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class DateViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate;
 
-        public ViewHolder(@NonNull View itemView) {
+        public DateViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tvDate);
         }

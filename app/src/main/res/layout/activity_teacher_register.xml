@@ -1,56 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
+    android:padding="24dp"
     tools:context=".TeacherRegisterActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register New Teacher"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+        android:layout_marginBottom="32dp"/>
 
-    <EditText
-        android:id="@+id/editTeacherName"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Teacher's Full Name" />
+        app:startIconDrawable="@drawable/ic_person"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/editTeacherEmail"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTeacherName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teacher\'s Full Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Teacher's Email"
-        android:inputType="textEmailAddress" />
+        android:layout_marginTop="16dp"
+        app:startIconDrawable="@drawable/ic_email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/editTeacherPassword"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTeacherEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teacher\'s Email"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Temporary Password"
-        android:inputType="textPassword" />
+        android:layout_marginTop="16dp"
+        app:startIconDrawable="@drawable/ic_password"
+        app:endIconMode="password_toggle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/editGradeAssigned"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTeacherPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Temporary Password"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Grade Assigned (e.g., 5)"
-        android:inputType="number" />
+        android:layout_marginTop="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editGradeAssigned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Grade Assigned (e.g., 5)"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegisterTeacher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Register Teacher" />
+        android:layout_marginTop="32dp"
+        android:text="Register Teacher"
+        android:padding="14dp"/>
 
 </LinearLayout>

@@ -7,12 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +21,7 @@ import java.util.List;
 
 public class AddResultsActivity extends AppCompatActivity {
 
-    private Spinner spinnerStudentsResults, spinnerSubjects;
+    private AutoCompleteTextView spinnerStudentsResults, spinnerSubjects;
     private EditText editTerm, editMarks;
     private Button btnSubmitResults;
     private DatabaseHelper dbHelper;
@@ -48,26 +46,13 @@ public class AddResultsActivity extends AppCompatActivity {
         loadStudentsForTeacher();
         loadSubjectsForTeacher();
 
-        spinnerStudentsResults.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedStudentId = studentMap.get(parent.getItemAtPosition(position).toString());
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedStudentId = -1;
-            }
+        spinnerStudentsResults.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedName = (String) parent.getItemAtPosition(position);
+            selectedStudentId = studentMap.get(selectedName);
         });
 
-        spinnerSubjects.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedSubject = parent.getItemAtPosition(position).toString();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedSubject = null;
-            }
+        spinnerSubjects.setOnItemClickListener((parent, view, position, id) -> {
+            selectedSubject = (String) parent.getItemAtPosition(position);
         });
 
         btnSubmitResults.setOnClickListener(v -> addResults());
@@ -91,8 +76,7 @@ public class AddResultsActivity extends AppCompatActivity {
             cursor.close();
         }
         db.close();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, studentNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, studentNames);
         spinnerStudentsResults.setAdapter(adapter);
     }
 
@@ -102,8 +86,7 @@ public class AddResultsActivity extends AppCompatActivity {
         if (teacherGrade == -1) return;
 
         List<String> subjects = dbHelper.getSubjectsByGrade(teacherGrade);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, subjects);
         spinnerSubjects.setAdapter(adapter);
     }
 

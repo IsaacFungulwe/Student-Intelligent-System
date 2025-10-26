@@ -4,14 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 public class TeacherDashboardActivity extends AppCompatActivity {
 
     private TextView tvTeacherWelcome;
-    private Button btnRegisterStudent, btnMarkAttendance, btnAddResults, btnManageSubjects, btnPostTeacherAnnouncement;
+    private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects, cardPostTeacherAnnouncement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,11 +19,11 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teacher_dashboard);
 
         tvTeacherWelcome = findViewById(R.id.tvTeacherWelcome);
-        btnRegisterStudent = findViewById(R.id.btnRegisterStudent);
-        btnMarkAttendance = findViewById(R.id.btnMarkAttendance);
-        btnAddResults = findViewById(R.id.btnAddResults);
-        btnManageSubjects = findViewById(R.id.btnManageSubjects);
-        btnPostTeacherAnnouncement = findViewById(R.id.btnPostTeacherAnnouncement);
+        cardRegisterStudent = findViewById(R.id.cardRegisterStudent);
+        cardMarkAttendance = findViewById(R.id.cardMarkAttendance);
+        cardAddResults = findViewById(R.id.cardAddResults);
+        cardManageSubjects = findViewById(R.id.cardManageSubjects);
+        cardPostTeacherAnnouncement = findViewById(R.id.cardPostTeacherAnnouncement);
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
@@ -34,10 +34,10 @@ public class TeacherDashboardActivity extends AppCompatActivity {
             tvTeacherWelcome.setText("Teacher Dashboard");
         }
 
-        btnRegisterStudent.setOnClickListener(v -> startActivity(new Intent(this, StudentRegisterActivity.class)));
-        btnMarkAttendance.setOnClickListener(v -> startActivity(new Intent(this, MarkAttendanceActivity.class)));
-        btnAddResults.setOnClickListener(v -> startActivity(new Intent(this, AddResultsActivity.class)));
-        btnManageSubjects.setOnClickListener(v -> startActivity(new Intent(this, ManageSubjectsActivity.class)));
-        btnPostTeacherAnnouncement.setOnClickListener(v -> startActivity(new Intent(this, PostAnnouncementActivity.class)));
+        cardRegisterStudent.setOnClickListener(v -> startActivity(new Intent(this, StudentRegisterActivity.class)));
+        cardMarkAttendance.setOnClickListener(v -> startActivity(new Intent(this, MarkAttendanceActivity.class)));
+        cardAddResults.setOnClickListener(v -> startActivity(new Intent(this, AddResultsActivity.class)));
+        cardManageSubjects.setOnClickListener(v -> startActivity(new Intent(this, ManageSubjectsActivity.class)));
+        cardPostTeacherAnnouncement.setOnClickListener(v -> startActivity(new Intent(this, PostAnnouncementActivity.class)));
     }
 }

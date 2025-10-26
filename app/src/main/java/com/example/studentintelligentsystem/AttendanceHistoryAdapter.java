@@ -1,56 +1,9 @@
 package com.example.studentintelligentsystem;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.List;
-
-public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHistoryAdapter.ViewHolder> {
-
-    private final List<AttendanceRecord> attendanceRecords;
-
-    public AttendanceHistoryAdapter(List<AttendanceRecord> attendanceRecords) {
-        this.attendanceRecords = attendanceRecords;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attendance_record, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AttendanceRecord record = attendanceRecords.get(position);
-        holder.tvDate.setText(record.getDate());
-
-        if (record.isPresent()) {
-            holder.ivStatus.setImageResource(R.drawable.dot_green);
-        } else {
-            holder.ivStatus.setImageResource(R.drawable.dot_red);
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return attendanceRecords.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDate;
-        ImageView ivStatus;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvDate = itemView.findViewById(R.id.tvDate);
-            ivStatus = itemView.findViewById(R.id.ivStatus);
-        }
-    }
+/**
+ * This file is obsolete and no longer used by the application.
+ * You can safely delete this file.
+ */
+public class AttendanceHistoryAdapter {
+    // This class is intentionally left empty to resolve build errors.
 }
