@@ -37,6 +37,7 @@
 
         <!-- Parent Role Activities -->
         <activity android:name=".ParentDashboardActivity" android:exported="false" />
+        <activity android:name=".ViewResultsActivity" android:exported="false" />
 
         <!-- Shared & New Activities -->
         <activity android:name=".PostAnnouncementActivity" android:exported="false" />

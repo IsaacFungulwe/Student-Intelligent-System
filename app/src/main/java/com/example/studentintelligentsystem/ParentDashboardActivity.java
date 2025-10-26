@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,15 +16,34 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ParentDashboardActivity extends AppCompatActivity {
 
     private TextView tvParentWelcome;
     private ListView lvMyChildren, lvAnnouncements;
+    private CardView cardViewResults;
+    private PieChart pieChart;
+    private BarChart barChart;
     private DatabaseHelper dbHelper;
     private int parentId;
 
@@ -39,6 +59,9 @@ public class ParentDashboardActivity extends AppCompatActivity {
         tvParentWelcome = findViewById(R.id.tvParentWelcome);
         lvMyChildren = findViewById(R.id.lvMyChildren);
         lvAnnouncements = findViewById(R.id.lvAnnouncements);
+        cardViewResults = findViewById(R.id.cardViewResults);
+        pieChart = findViewById(R.id.pieChart);
+        barChart = findViewById(R.id.barChart);
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         parentId = prefs.getInt(LoginActivity.KEY_USER_ID, -1);
@@ -51,6 +74,13 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         loadChildrenData();
         loadAnnouncements();
+        loadResultsForChart();
+        loadAttendanceForChart();
+
+        cardViewResults.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ViewResultsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadChildrenData() {
@@ -128,6 +158,118 @@ public class ParentDashboardActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, announcementList);
         lvAnnouncements.setAdapter(adapter);
     }
+
+    private void loadResultsForChart() {
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        Set<String> childrenGrades = prefs.getStringSet("userChildrenGrades", new HashSet<>());
+        Map<String, Float> subjectAverages = new HashMap<>();
+
+        if (childrenGrades.isEmpty()) {
+            pieChart.setNoDataText("No results available to display chart.");
+            return;
+        }
+
+        String grades = String.join(",", childrenGrades);
+        String subjectsQuery = "SELECT DISTINCT " + DatabaseHelper.SUBJECT_NAME + " FROM " + DatabaseHelper.TABLE_SUBJECTS + " WHERE " + DatabaseHelper.SUBJECT_GRADE + " IN (" + grades + ")";
+        Cursor subjectsCursor = db.rawQuery(subjectsQuery, null);
+
+        if (subjectsCursor != null && subjectsCursor.moveToFirst()) {
+            do {
+                String subject = subjectsCursor.getString(subjectsCursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_NAME));
+                subjectAverages.put(subject, 0f);
+            } while (subjectsCursor.moveToNext());
+            subjectsCursor.close();
+        }
+
+        String resultsQuery = "SELECT r." + DatabaseHelper.RESULT_SUBJECT + ", AVG(r." + DatabaseHelper.RESULT_MARKS + ") as avg_marks FROM " + DatabaseHelper.TABLE_RESULTS + " r INNER JOIN " + DatabaseHelper.TABLE_STUDENT + " s ON r." + DatabaseHelper.RESULT_FK_STUDENT_ID + " = s." + DatabaseHelper.STUDENT_ID + " WHERE s." + DatabaseHelper.STUDENT_FK_PARENT_ID + " = ? GROUP BY r." + DatabaseHelper.RESULT_SUBJECT;
+
+        Cursor resultsCursor = db.rawQuery(resultsQuery, new String[]{String.valueOf(parentId)});
+
+        if (resultsCursor != null && resultsCursor.moveToFirst()) {
+            do {
+                String subject = resultsCursor.getString(resultsCursor.getColumnIndexOrThrow(DatabaseHelper.RESULT_SUBJECT));
+                float avgMarks = resultsCursor.getFloat(resultsCursor.getColumnIndexOrThrow("avg_marks"));
+                subjectAverages.put(subject, avgMarks);
+            } while (resultsCursor.moveToNext());
+            resultsCursor.close();
+        }
+
+        for (Map.Entry<String, Float> entry : subjectAverages.entrySet()) {
+            entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+        }
+
+        if (entries.isEmpty()) {
+            pieChart.setNoDataText("No results available to display chart.");
+            return;
+        }
+
+        PieDataSet dataSet = new PieDataSet(entries, "Results");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.animateY(1000);
+        pieChart.invalidate(); // refresh
+    }
+
+    private void loadAttendanceForChart() {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int presentCount = 0;
+        int absentCount = 0;
+
+        String query = "SELECT " + DatabaseHelper.ATTENDANCE_STATUS + ", COUNT(" + DatabaseHelper.ATTENDANCE_STATUS + ") FROM " + DatabaseHelper.TABLE_ATTENDANCE + " a INNER JOIN " + DatabaseHelper.TABLE_STUDENT + " s ON a." + DatabaseHelper.ATTENDANCE_FK_STUDENT_ID + " = s." + DatabaseHelper.STUDENT_ID + " WHERE s." + DatabaseHelper.STUDENT_FK_PARENT_ID + " = ? GROUP BY " + DatabaseHelper.ATTENDANCE_STATUS;
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(parentId)});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String status = cursor.getString(0);
+                int count = cursor.getInt(1);
+                if ("Present".equalsIgnoreCase(status)) {
+                    presentCount = count;
+                } else if ("Absent".equalsIgnoreCase(status)) {
+                    absentCount = count;
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        entries.add(new BarEntry(0, presentCount));
+        entries.add(new BarEntry(1, absentCount));
+
+        BarDataSet dataSet = new BarDataSet(entries, "Attendance");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("Present");
+        labels.add("Absent");
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(65f); // 65 days in a term
+        barChart.getAxisRight().setEnabled(false);
+
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+        barChart.getDescription().setEnabled(false);
+        barChart.animateY(1000);
+        barChart.invalidate();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
