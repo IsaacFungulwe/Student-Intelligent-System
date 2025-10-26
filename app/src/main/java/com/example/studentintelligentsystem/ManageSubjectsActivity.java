@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
@@ -57,6 +63,8 @@ public class ManageSubjectsActivity extends AppCompatActivity {
         btnAddSubject.setOnClickListener(v -> addSubject());
 
         loadSubjects();
+        // Register the ListView for the context menu
+        registerForContextMenu(lvSubjects);
     }
 
     private void addSubject() {
@@ -80,5 +88,31 @@ public class ManageSubjectsActivity extends AppCompatActivity {
         subjectList = dbHelper.getSubjectsByGrade(teacherGrade);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, subjectList);
         lvSubjects.setAdapter(adapter);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.lvSubjects) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_subject_context, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == R.id.delete_subject) {
+            String subjectToDelete = subjectList.get(info.position);
+            deleteSubject(subjectToDelete);
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void deleteSubject(String subjectName) {
+        dbHelper.deleteSubject(subjectName, teacherGrade);
+        Toast.makeText(this, "Subject '" + subjectName + "' deleted.", Toast.LENGTH_SHORT).show();
+        loadSubjects(); // Refresh the list to show the change
     }
 }

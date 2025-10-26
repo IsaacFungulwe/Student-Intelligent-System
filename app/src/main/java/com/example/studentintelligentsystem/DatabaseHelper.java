@@ -167,6 +167,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
+    public void deleteSubject(String subjectName, int grade) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_SUBJECTS, SUBJECT_NAME + " = ? AND " + SUBJECT_GRADE + " = ?", new String[]{subjectName, String.valueOf(grade)});
+        db.close();
+    }
+
     public List<String> getUniqueAttendanceDates() {
         List<String> dates = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
