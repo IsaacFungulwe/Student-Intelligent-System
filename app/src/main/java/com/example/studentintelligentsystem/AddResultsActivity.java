@@ -22,7 +22,7 @@ import java.util.List;
 public class AddResultsActivity extends AppCompatActivity {
 
     private AutoCompleteTextView spinnerStudentsResults, spinnerSubjects;
-    private EditText editTerm, editMarks;
+    private EditText editTerm, editMarks, editComment;
     private Button btnSubmitResults;
     private DatabaseHelper dbHelper;
 
@@ -41,6 +41,7 @@ public class AddResultsActivity extends AppCompatActivity {
         spinnerSubjects = findViewById(R.id.spinnerSubjects);
         editTerm = findViewById(R.id.editTerm);
         editMarks = findViewById(R.id.editMarks);
+        editComment = findViewById(R.id.editComment);
         btnSubmitResults = findViewById(R.id.btnSubmitResults);
 
         loadStudentsForTeacher();
@@ -93,6 +94,7 @@ public class AddResultsActivity extends AppCompatActivity {
     private void addResults() {
         String term = editTerm.getText().toString().trim();
         String marksStr = editMarks.getText().toString().trim();
+        String comment = editComment.getText().toString().trim();
 
         if (selectedStudentId == -1 || TextUtils.isEmpty(selectedSubject) || TextUtils.isEmpty(term) || TextUtils.isEmpty(marksStr)) {
             Toast.makeText(this, "Please select a student, subject, and fill all result fields.", Toast.LENGTH_SHORT).show();
@@ -109,6 +111,7 @@ public class AddResultsActivity extends AppCompatActivity {
         values.put(DatabaseHelper.RESULT_SUBJECT, selectedSubject);
         values.put(DatabaseHelper.RESULT_TERM, term);
         values.put(DatabaseHelper.RESULT_MARKS, marks);
+        values.put(DatabaseHelper.RESULT_COMMENT, comment);
         values.put(DatabaseHelper.RESULT_FK_TEACHER_ID, teacherId);
         long newRowId = db.insert(DatabaseHelper.TABLE_RESULTS, null, values);
         db.close();

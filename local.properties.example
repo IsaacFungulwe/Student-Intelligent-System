@@ -1,0 +1,10 @@
+## This file is not checked into version control
+# Copy this file to 'local.properties' and add your actual API keys
+
+# Android SDK location (required)
+sdk.dir=/path/to/your/Android/Sdk
+
+# Gemini API Key (required for AI features)
+# Get your API key from: https://makersuite.google.com/app/apikey
+GEMINI_API_KEY=paste-your-gemini-api-key-here
+

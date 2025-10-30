@@ -70,6 +70,22 @@
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teacher's Comment (Optional)"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSubmitResults"
         android:layout_width="match_parent"

@@ -41,7 +41,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
     private TextView tvParentWelcome;
     private ListView lvMyChildren, lvAnnouncements;
-    private CardView cardViewResults;
+    private CardView cardViewResults, cardAIAnalysis;
     private PieChart pieChart;
     private BarChart barChart;
     private DatabaseHelper dbHelper;
@@ -60,6 +60,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
         lvMyChildren = findViewById(R.id.lvMyChildren);
         lvAnnouncements = findViewById(R.id.lvAnnouncements);
         cardViewResults = findViewById(R.id.cardViewResults);
+        cardAIAnalysis = findViewById(R.id.cardAIAnalysis);
         pieChart = findViewById(R.id.pieChart);
         barChart = findViewById(R.id.barChart);
 
@@ -79,6 +80,11 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         cardViewResults.setOnClickListener(v -> {
             Intent intent = new Intent(this, ViewResultsActivity.class);
+            startActivity(intent);
+        });
+
+        cardAIAnalysis.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PerformanceAnalysisActivity.class);
             startActivity(intent);
         });
     }

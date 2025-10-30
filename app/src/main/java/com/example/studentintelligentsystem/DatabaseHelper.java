@@ -14,7 +14,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "StudentIntelligentSystem.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     // Tables
     public static final String TABLE_ADMIN = "Admin";
@@ -67,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String RESULT_SUBJECT = "subject";
     public static final String RESULT_TERM = "term";
     public static final String RESULT_MARKS = "marks";
+    public static final String RESULT_COMMENT = "comment";
     public static final String RESULT_FK_TEACHER_ID = "recordedByTeacherId";
 
     public static final String ANNOUNCEMENT_ID = "announcementId";
@@ -94,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_PARENT + " (" + PARENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + PARENT_NAME + " TEXT NOT NULL, " + PARENT_EMAIL + " TEXT NOT NULL UNIQUE, " + PARENT_PHONE + " TEXT, " + PARENT_PASSWORD + " TEXT NOT NULL, " + PARENT_FK_ADMIN_ID + " INTEGER NOT NULL, FOREIGN KEY(" + PARENT_FK_ADMIN_ID + ") REFERENCES " + TABLE_ADMIN + "(" + ADMIN_ID + "))");
         db.execSQL("CREATE TABLE " + TABLE_STUDENT + " (" + STUDENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + STUDENT_NAME + " TEXT NOT NULL, " + STUDENT_AGE + " INTEGER, " + STUDENT_GENDER + " TEXT, " + STUDENT_GRADE + " INTEGER NOT NULL, " + STUDENT_ADDRESS + " TEXT, " + STUDENT_FK_PARENT_ID + " INTEGER NOT NULL, " + STUDENT_FK_TEACHER_ID + " INTEGER NOT NULL, FOREIGN KEY(" + STUDENT_FK_PARENT_ID + ") REFERENCES " + TABLE_PARENT + "(" + PARENT_ID + "), FOREIGN KEY(" + STUDENT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "))");
         db.execSQL("CREATE TABLE " + TABLE_ATTENDANCE + " (" + ATTENDANCE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ATTENDANCE_FK_STUDENT_ID + " INTEGER NOT NULL, " + ATTENDANCE_DATE + " TEXT NOT NULL, " + ATTENDANCE_STATUS + " TEXT NOT NULL, " + ATTENDANCE_FK_TEACHER_ID + " INTEGER NOT NULL, FOREIGN KEY(" + ATTENDANCE_FK_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + "), FOREIGN KEY(" + ATTENDANCE_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "))");
-        db.execSQL("CREATE TABLE " + TABLE_RESULTS + " (" + RESULT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + RESULT_FK_STUDENT_ID + " INTEGER NOT NULL, " + RESULT_SUBJECT + " TEXT NOT NULL, " + RESULT_TERM + " TEXT NOT NULL, " + RESULT_MARKS + " INTEGER NOT NULL, " + RESULT_FK_TEACHER_ID + " INTEGER NOT NULL, FOREIGN KEY(" + RESULT_FK_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + "), FOREIGN KEY(" + RESULT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "))");
+        db.execSQL("CREATE TABLE " + TABLE_RESULTS + " (" + RESULT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + RESULT_FK_STUDENT_ID + " INTEGER NOT NULL, " + RESULT_SUBJECT + " TEXT NOT NULL, " + RESULT_TERM + " TEXT NOT NULL, " + RESULT_MARKS + " INTEGER NOT NULL, " + RESULT_COMMENT + " TEXT, " + RESULT_FK_TEACHER_ID + " INTEGER NOT NULL, FOREIGN KEY(" + RESULT_FK_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + "), FOREIGN KEY(" + RESULT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "))");
         db.execSQL("CREATE TABLE " + TABLE_ANNOUNCEMENT + " (" + ANNOUNCEMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ANNOUNCEMENT_TITLE + " TEXT NOT NULL, " + ANNOUNCEMENT_MESSAGE + " TEXT NOT NULL, " + ANNOUNCEMENT_ROLE + " TEXT NOT NULL, " + ANNOUNCEMENT_FK_CREATOR_ID + " INTEGER NOT NULL, " + ANNOUNCEMENT_GRADE_TARGET + " INTEGER, " + ANNOUNCEMENT_SOURCE_LABEL + " TEXT, " + ANNOUNCEMENT_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP)");
         db.execSQL("CREATE TABLE " + TABLE_SUBJECTS + " (" + SUBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + SUBJECT_NAME + " TEXT NOT NULL, " + SUBJECT_GRADE + " INTEGER NOT NULL, " + SUBJECT_FK_TEACHER_ID + " INTEGER NOT NULL, FOREIGN KEY(" + SUBJECT_FK_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "))");
     }
@@ -201,6 +202,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(ATTENDANCE_STATUS, isPresent ? "Present" : "Absent");
         db.insert(TABLE_ATTENDANCE, null, values);
         db.close();
+    }
+
+    public Cursor getStudentsByParentId(int parentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_STUDENT, null, STUDENT_FK_PARENT_ID + "=?", new String[]{String.valueOf(parentId)}, null, null, null);
+    }
+
+    public Cursor getStudentById(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_STUDENT, null, STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, null);
+    }
+
+    // Get all results for a specific student
+    public Cursor getResultsForStudent(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_RESULTS, null, RESULT_FK_STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, RESULT_TERM + " DESC");
+    }
+
+    // Calculate attendance percentage for a student
+    public double getAttendancePercentage(int studentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_ATTENDANCE, new String[]{ATTENDANCE_STATUS}, ATTENDANCE_FK_STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, null);
+
+        int totalDays = 0;
+        int presentDays = 0;
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                totalDays++;
+                String status = cursor.getString(cursor.getColumnIndexOrThrow(ATTENDANCE_STATUS));
+                if ("Present".equalsIgnoreCase(status)) {
+                    presentDays++;
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+
+        return totalDays > 0 ? (presentDays * 100.0 / totalDays) : 0.0;
     }
 
     public Cursor getAttendanceForStudent(int studentId) {
