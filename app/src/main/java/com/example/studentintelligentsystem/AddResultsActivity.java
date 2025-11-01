@@ -2,6 +2,7 @@ package com.example.studentintelligentsystem;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,6 +38,7 @@ public class AddResultsActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+        // Initialize UI components
         spinnerStudentsResults = findViewById(R.id.spinnerStudentsResults);
         spinnerSubjects = findViewById(R.id.spinnerSubjects);
         editTerm = findViewById(R.id.editTerm);
@@ -44,6 +46,7 @@ public class AddResultsActivity extends AppCompatActivity {
         editComment = findViewById(R.id.editComment);
         btnSubmitResults = findViewById(R.id.btnSubmitResults);
 
+        // Load students and subjects for the teacher
         loadStudentsForTeacher();
         loadSubjectsForTeacher();
 
@@ -59,13 +62,18 @@ public class AddResultsActivity extends AppCompatActivity {
         btnSubmitResults.setOnClickListener(v -> addResults());
     }
 
+    // Loads students assigned to the teacher’s grade
     private void loadStudentsForTeacher() {
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
         if (teacherGrade == -1) return;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT, new String[]{DatabaseHelper.STUDENT_ID, DatabaseHelper.STUDENT_NAME}, DatabaseHelper.STUDENT_GRADE + " = ?", new String[]{String.valueOf(teacherGrade)}, null, null, null);
+        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT,
+                new String[]{DatabaseHelper.STUDENT_ID, DatabaseHelper.STUDENT_NAME},
+                DatabaseHelper.STUDENT_GRADE + " = ?",
+                new String[]{String.valueOf(teacherGrade)}, null, null, null);
+
         ArrayList<String> studentNames = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -77,10 +85,12 @@ public class AddResultsActivity extends AppCompatActivity {
             cursor.close();
         }
         db.close();
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, studentNames);
         spinnerStudentsResults.setAdapter(adapter);
     }
 
+    // Loads subjects based on teacher’s grade
     private void loadSubjectsForTeacher() {
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
@@ -91,12 +101,14 @@ public class AddResultsActivity extends AppCompatActivity {
         spinnerSubjects.setAdapter(adapter);
     }
 
+    // Adds student results to database and sends data to ViewResultsActivity
     private void addResults() {
         String term = editTerm.getText().toString().trim();
         String marksStr = editMarks.getText().toString().trim();
         String comment = editComment.getText().toString().trim();
 
-        if (selectedStudentId == -1 || TextUtils.isEmpty(selectedSubject) || TextUtils.isEmpty(term) || TextUtils.isEmpty(marksStr)) {
+        if (selectedStudentId == -1 || TextUtils.isEmpty(selectedSubject) ||
+                TextUtils.isEmpty(term) || TextUtils.isEmpty(marksStr)) {
             Toast.makeText(this, "Please select a student, subject, and fill all result fields.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -105,6 +117,7 @@ public class AddResultsActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherId = prefs.getInt(LoginActivity.KEY_USER_ID, -1);
 
+        // Save results in database
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.RESULT_FK_STUDENT_ID, selectedStudentId);
@@ -118,7 +131,15 @@ public class AddResultsActivity extends AppCompatActivity {
 
         if (newRowId != -1) {
             Toast.makeText(this, "Results added successfully!", Toast.LENGTH_SHORT).show();
-            finish();
+
+            // ✅ Send data to ViewResultsActivity using Intent (from your example)
+            Intent intent = new Intent(AddResultsActivity.this, ViewResultsActivity.class);
+            intent.putExtra("subject", selectedSubject);
+            intent.putExtra("term", term);
+            intent.putExtra("marks", String.valueOf(marks));
+            intent.putExtra("comments", comment);
+            startActivity(intent);
+
         } else {
             Toast.makeText(this, "Error adding results.", Toast.LENGTH_LONG).show();
         }
