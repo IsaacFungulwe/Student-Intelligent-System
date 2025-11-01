@@ -31,9 +31,12 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -91,7 +94,6 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         lvMyChildren.setOnItemClickListener((parent, view, position, id) -> {
             String selectedChild = (String) parent.getItemAtPosition(position);
-            // Extract the name from the "Name - Grade: X" string
             String childName = selectedChild.split(" - ")[0];
             Integer childId = childrenMap.get(childName);
 
@@ -163,14 +165,25 @@ public class ParentDashboardActivity extends AppCompatActivity {
 
         String[] selectionArgs = childrenGrades.toArray(new String[0]);
 
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ANNOUNCEMENT, new String[]{DatabaseHelper.ANNOUNCEMENT_TITLE, DatabaseHelper.ANNOUNCEMENT_MESSAGE, DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL}, selection.toString(), selectionArgs, null, null, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP + " DESC");
+        Cursor cursor = db.query(DatabaseHelper.TABLE_ANNOUNCEMENT, new String[]{DatabaseHelper.ANNOUNCEMENT_TITLE, DatabaseHelper.ANNOUNCEMENT_MESSAGE, DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP}, selection.toString(), selectionArgs, null, null, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP + " DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_TITLE));
                 String message = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_MESSAGE));
                 String source = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL));
-                announcementList.add("[" + source + "] " + title + "\n" + message);
+                String timestamp = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_TIMESTAMP));
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                try {
+                    Date date = sdf.parse(timestamp);
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
+                    timestamp = outputFormat.format(date);
+                } catch (Exception e) {
+                    // Keep the raw timestamp if parsing fails
+                }
+
+                announcementList.add("[" + source + "] " + title + "\n" + message + "\n" + timestamp);
             } while (cursor.moveToNext());
             cursor.close();
         }

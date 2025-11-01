@@ -30,6 +30,7 @@
         <activity android:name=".AdminDashboardActivity" android:exported="false" />
         <activity android:name=".TeacherRegisterActivity" android:exported="false" />
         <activity android:name=".ParentRegisterActivity" android:exported="false" />
+        <activity android:name=".ViewTeachersActivity" android:exported="false" />
 
         <!-- Teacher Role Activities -->
         <activity android:name=".TeacherDashboardActivity" android:exported="false" />
@@ -37,6 +38,7 @@
         <activity android:name=".MarkAttendanceActivity" android:exported="false" />
         <activity android:name=".AddResultsActivity" android:exported="false" />
         <activity android:name=".ManageSubjectsActivity" android:exported="false" />
+        <activity android:name=".ManageAnnouncementsActivity" android:exported="false" />
 
         <!-- Parent Role Activities -->
         <activity android:name=".ParentDashboardActivity" android:exported="false" />

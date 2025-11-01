@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    private CardView cardRegisterTeacher, cardRegisterParent, cardPostAnnouncement;
+    private CardView cardRegisterTeacher, cardRegisterParent, cardPostAnnouncement, cardManageAnnouncements, cardViewTeachers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +23,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         cardRegisterTeacher = findViewById(R.id.cardRegisterTeacher);
         cardRegisterParent = findViewById(R.id.cardRegisterParent);
         cardPostAnnouncement = findViewById(R.id.cardPostAnnouncement);
+        cardManageAnnouncements = findViewById(R.id.cardManageAnnouncements);
+        cardViewTeachers = findViewById(R.id.cardViewTeachers);
 
         cardRegisterTeacher.setOnClickListener(v -> {
             Intent intent = new Intent(this, TeacherRegisterActivity.class);
@@ -36,6 +38,16 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         cardPostAnnouncement.setOnClickListener(v -> {
             Intent intent = new Intent(this, PostAnnouncementActivity.class);
+            startActivity(intent);
+        });
+
+        cardManageAnnouncements.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ManageAnnouncementsActivity.class);
+            startActivity(intent);
+        });
+
+        cardViewTeachers.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ViewTeachersActivity.class);
             startActivity(intent);
         });
     }

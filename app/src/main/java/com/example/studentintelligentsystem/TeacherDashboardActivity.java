@@ -14,7 +14,7 @@ import androidx.cardview.widget.CardView;
 public class TeacherDashboardActivity extends AppCompatActivity {
 
     private TextView tvTeacherWelcome;
-    private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects, cardPostTeacherAnnouncement;
+    private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects, cardPostTeacherAnnouncement, cardManageAnnouncements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         cardAddResults = findViewById(R.id.cardAddResults);
         cardManageSubjects = findViewById(R.id.cardManageSubjects);
         cardPostTeacherAnnouncement = findViewById(R.id.cardPostTeacherAnnouncement);
+        cardManageAnnouncements = findViewById(R.id.cardManageAnnouncements);
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
         int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
@@ -45,6 +46,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         cardAddResults.setOnClickListener(v -> startActivity(new Intent(this, AddResultsActivity.class)));
         cardManageSubjects.setOnClickListener(v -> startActivity(new Intent(this, ManageSubjectsActivity.class)));
         cardPostTeacherAnnouncement.setOnClickListener(v -> startActivity(new Intent(this, PostAnnouncementActivity.class)));
+        cardManageAnnouncements.setOnClickListener(v -> startActivity(new Intent(this, ManageAnnouncementsActivity.class)));
     }
 
     @Override
