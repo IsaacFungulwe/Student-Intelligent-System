@@ -46,6 +46,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     private BarChart barChart;
     private DatabaseHelper dbHelper;
     private int parentId;
+    private final HashMap<String, Integer> childrenMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,20 +88,38 @@ public class ParentDashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PerformanceAnalysisActivity.class);
             startActivity(intent);
         });
+
+        lvMyChildren.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedChild = (String) parent.getItemAtPosition(position);
+            // Extract the name from the "Name - Grade: X" string
+            String childName = selectedChild.split(" - ")[0];
+            Integer childId = childrenMap.get(childName);
+
+            if (childId != null) {
+                Intent intent = new Intent(this, AttendanceHistoryActivity.class);
+                intent.putExtra("studentId", childId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Could not find details for the selected child.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadChildrenData() {
         Set<Integer> childrenGrades = new HashSet<>();
         ArrayList<String> childrenList = new ArrayList<>();
+        childrenMap.clear();
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT, new String[]{DatabaseHelper.STUDENT_NAME, DatabaseHelper.STUDENT_GRADE}, DatabaseHelper.STUDENT_FK_PARENT_ID + " = ?", new String[]{String.valueOf(parentId)}, null, null, null);
+        Cursor cursor = db.query(DatabaseHelper.TABLE_STUDENT, new String[]{DatabaseHelper.STUDENT_ID, DatabaseHelper.STUDENT_NAME, DatabaseHelper.STUDENT_GRADE}, DatabaseHelper.STUDENT_FK_PARENT_ID + " = ?", new String[]{String.valueOf(parentId)}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
+                int studentId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.STUDENT_ID));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.STUDENT_NAME));
                 int grade = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.STUDENT_GRADE));
                 childrenList.add(name + " - Grade: " + grade);
+                childrenMap.put(name, studentId);
                 childrenGrades.add(grade);
             } while (cursor.moveToNext());
             cursor.close();
