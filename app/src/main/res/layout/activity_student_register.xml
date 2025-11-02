@@ -29,7 +29,7 @@
                 android:id="@+id/editStudentName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Student\'s Full Name" />
+                android:hint="Student's Full Name" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -86,7 +86,7 @@
                 android:id="@+id/editParentEmailToLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Parent\'s Email to Link"
+                android:hint="Enter Parent's Email to Link"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,6 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:backgroundTint="@color/buttonColor"
             android:text="Register and Link Student"
             android:padding="14dp" />
 

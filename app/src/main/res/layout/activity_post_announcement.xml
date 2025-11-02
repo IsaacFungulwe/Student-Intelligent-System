@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Post Announcement"
+        android:backgroundTint="@color/buttonColor"
         app:icon="@drawable/ic_edit_announcement"
         style="@style/Widget.Material3.Button.ElevatedButton"/>
 

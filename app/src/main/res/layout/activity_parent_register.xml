@@ -26,7 +26,7 @@
             android:id="@+id/editParentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Parent\'s Full Name" />
+            android:hint="Parent's Full Name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -40,7 +40,7 @@
             android:id="@+id/editParentEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Parent\'s Email"
+            android:hint="Parent's Email"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,7 +55,7 @@
             android:id="@+id/editParentPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Parent\'s Phone"
+            android:hint="Parent's Phone"
             android:inputType="phone" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,6 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Register Parent"
+        android:backgroundTint="@color/buttonColor"
         android:padding="14dp"/>
 
 </LinearLayout>

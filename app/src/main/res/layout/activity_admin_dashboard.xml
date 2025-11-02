@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".AdminDashboardActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -31,6 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Admin Dashboard"
+                android:textColor="#212121"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp" />
@@ -50,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
                     app:cardElevation="6dp"
                     app:cardCornerRadius="12dp"
                     android:layout_margin="12dp">
@@ -70,6 +73,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Register Teacher"
+                            android:textColor="#212121"
                             android:layout_marginTop="12dp"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -82,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
                     app:cardElevation="6dp"
                     app:cardCornerRadius="12dp"
                     android:layout_margin="12dp">
@@ -102,6 +107,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Register Parent"
+                            android:textColor="#212121"
                             android:layout_marginTop="12dp"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -114,6 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
                     app:cardElevation="6dp"
                     app:cardCornerRadius="12dp"
                     android:layout_margin="12dp">
@@ -134,6 +141,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Post Announcement"
+                            android:textColor="#212121"
                             android:layout_marginTop="12dp"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -146,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
                     app:cardElevation="6dp"
                     app:cardCornerRadius="12dp"
                     android:layout_margin="12dp">
@@ -166,6 +175,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Manage Announcements"
+                            android:textColor="#212121"
                             android:layout_marginTop="12dp"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -178,6 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
                     app:cardElevation="6dp"
                     app:cardCornerRadius="12dp"
                     android:layout_margin="12dp">
@@ -198,6 +209,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View Teachers"
+                            android:textColor="#212121"
                             android:layout_marginTop="12dp"
                             android:textSize="18sp" />
                     </LinearLayout>
