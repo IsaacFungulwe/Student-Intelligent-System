@@ -247,4 +247,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(TABLE_ATTENDANCE, null, ATTENDANCE_FK_STUDENT_ID + "=?", new String[]{String.valueOf(studentId)}, null, null, ATTENDANCE_DATE + " DESC");
     }
+
+    // Update a result record
+    public boolean updateResult(int resultId, String subject, String term, int marks, String comment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(RESULT_SUBJECT, subject);
+        values.put(RESULT_TERM, term);
+        values.put(RESULT_MARKS, marks);
+        values.put(RESULT_COMMENT, comment);
+
+        int rowsAffected = db.update(TABLE_RESULTS, values, RESULT_ID + " = ?",
+                new String[]{String.valueOf(resultId)});
+        db.close();
+        return rowsAffected > 0;
+    }
+
+    // Delete a result record
+    public boolean deleteResult(int resultId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(TABLE_RESULTS, RESULT_ID + " = ?",
+                new String[]{String.valueOf(resultId)});
+        db.close();
+        return rowsDeleted > 0;
+    }
 }

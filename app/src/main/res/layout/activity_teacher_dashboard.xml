@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2"
-                android:rowCount="4"
+                android:rowCount="5"
                 android:alignmentMode="alignMargins"
                 android:columnOrderPreserved="false">
 
@@ -277,6 +277,40 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View Parents"
+                            android:textColor="#212121"
+                            android:textAlignment="center"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card 8: View & Edit Results -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardViewEditResults"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1"
+                    app:cardBackgroundColor="#F5F5F5"
+                    app:cardElevation="6dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_margin="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_results" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View &amp; Edit Results"
                             android:textColor="#212121"
                             android:textAlignment="center"
                             android:layout_marginTop="12dp" />
