@@ -23,7 +23,8 @@ import java.util.Locale;
 public class TeacherDashboardActivity extends AppCompatActivity {
 
     private TextView tvTeacherWelcome;
-    private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects, cardPostTeacherAnnouncement, cardManageAnnouncements, cardViewParents;
+    private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects,
+            cardPostTeacherAnnouncement, cardManageAnnouncements, cardViewParents, cardViewEditResults;
     private ListView lvTeacherAnnouncements;
     private DatabaseHelper dbHelper;
 
@@ -44,6 +45,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         cardPostTeacherAnnouncement = findViewById(R.id.cardPostTeacherAnnouncement);
         cardManageAnnouncements = findViewById(R.id.cardManageAnnouncements);
         cardViewParents = findViewById(R.id.cardViewParents);
+        cardViewEditResults = findViewById(R.id.cardViewEditResults);
         lvTeacherAnnouncements = findViewById(R.id.lvTeacherAnnouncements);
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
@@ -62,6 +64,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         cardPostTeacherAnnouncement.setOnClickListener(v -> startActivity(new Intent(this, PostAnnouncementActivity.class)));
         cardManageAnnouncements.setOnClickListener(v -> startActivity(new Intent(this, ManageAnnouncementsActivity.class)));
         cardViewParents.setOnClickListener(v -> startActivity(new Intent(this, ViewParentsActivity.class)));
+        cardViewEditResults.setOnClickListener(v -> startActivity(new Intent(this, ViewEditResultsActivity.class)));
 
         loadAnnouncements(teacherGrade);
     }
