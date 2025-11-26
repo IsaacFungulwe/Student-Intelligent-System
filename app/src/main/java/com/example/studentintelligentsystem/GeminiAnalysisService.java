@@ -35,10 +35,10 @@ public class GeminiAnalysisService {
     }
 
     /**
-     * Analyze student performance using Gemini AI
-     * @param studentId The ID of the student to analyze
-     * @param callback Callback to receive analysis results
-     * @param executor Executor for running async operations
+       Analyze student performance using Gemini AI
+       @param studentId The ID of the student to analyze
+       @param callback Callback to receive analysis results
+       @param executor Executor for running async operations
      */
     public void analyzeStudentPerformance(int studentId, AnalysisCallback callback, Executor executor) {
         // Fetch student data
@@ -120,11 +120,11 @@ public class GeminiAnalysisService {
 
         prompt.append("You are an educational analyst. Analyze the following student's academic performance comprehensively:\n\n");
 
-        prompt.append("**Student Information:**\n");
+        prompt.append("Student Information:\n");
         prompt.append("- Name: ").append(data.studentName).append("\n");
         prompt.append("- Grade: ").append(data.grade).append("\n\n");
 
-        prompt.append("**Academic Performance (Grades by Subject):**\n");
+        prompt.append("Academic Performance (Grades by Subject):\n");
         if (data.grades.isEmpty()) {
             prompt.append("- No grades recorded yet\n");
         } else {
@@ -134,13 +134,13 @@ public class GeminiAnalysisService {
                 totalMarks += entry.getValue();
             }
             double average = totalMarks / data.grades.size();
-            prompt.append("\n**Average Score:** ").append(String.format("%.2f", average)).append("%\n");
+            prompt.append("\n Average Score: ").append(String.format("%.2f", average)).append("%\n");
         }
 
-        prompt.append("\n**Attendance:**\n");
+        prompt.append("\n Attendance: \n");
         prompt.append("- Attendance Rate: ").append(String.format("%.2f", data.attendancePercentage)).append("%\n");
 
-        prompt.append("\n**Teacher's Comments:**\n");
+        prompt.append("\n Teacher's Comments: \n");
         if (data.teacherComments.isEmpty()) {
             prompt.append("- No teacher comments recorded\n");
         } else {
@@ -149,37 +149,19 @@ public class GeminiAnalysisService {
             }
         }
 
-        prompt.append("\n**Please provide a comprehensive analysis with the following sections:**\n\n");
+        prompt.append("\nProvide a very brief analysis with ONLY these three sections (no markdown formatting, plain text only):\n\n");
 
-        prompt.append("1. **Performance Overview**\n");
-        prompt.append("   - Identify strong subjects and weak subjects\n");
-        prompt.append("   - Detect any inconsistent performance patterns\n");
-        prompt.append("   - Compare grades across different subjects\n\n");
+        prompt.append("BEHAVIOUR & LEARNING ISSUES\n");
+        prompt.append("List any behavioral or learning issues identified from the data and comments.\n\n");
 
-        prompt.append("2. **Attendance Correlation Analysis**\n");
-        prompt.append("   - Determine if low attendance correlates with poor academic results\n");
-        prompt.append("   - Assess the impact of attendance on overall performance\n\n");
+        prompt.append("SUGGESTED IMPROVEMENT ACTIONS\n");
+        prompt.append("Provide specific, actionable recommendations for improvement.\n\n");
 
-        prompt.append("3. **Behavioral and Learning Issues**\n");
-        prompt.append("   - Analyze teacher comments for behavioral concerns\n");
-        prompt.append("   - Identify learning difficulties or challenges mentioned\n");
-        prompt.append("   - Note any positive behaviors or strengths\n\n");
+        prompt.append("ENCOURAGEMENT AND FEEDBACK MESSAGES\n");
+        prompt.append("Write encouraging and positive feedback messages based on the student's performance.\n\n");
 
-        prompt.append("4. **Possible Causes of Underperformance**\n");
-        prompt.append("   - Based on the data, suggest potential reasons for low performance\n");
-        prompt.append("   - Consider factors like attendance, subject difficulty, behavioral issues\n\n");
+        prompt.append("Format response in plain text with section headers only. Do not use markdown, asterisks, hyphens, or special formatting.");
 
-        prompt.append("5. **Suggested Improvement Actions**\n");
-        prompt.append("   - Provide specific, actionable recommendations\n");
-        prompt.append("   - Suggest study strategies for weak subjects\n");
-        prompt.append("   - Recommend interventions if needed\n\n");
-
-        prompt.append("6. **Encouragement and Feedback Message**\n");
-        prompt.append("   - Write an encouraging message for the student\n");
-        prompt.append("   - Highlight strengths and areas of improvement\n");
-        prompt.append("   - Provide motivation for better performance\n\n");
-
-        prompt.append("Format your response in a clear, structured manner with proper headings and bullet points.");
 
         return prompt.toString();
     }

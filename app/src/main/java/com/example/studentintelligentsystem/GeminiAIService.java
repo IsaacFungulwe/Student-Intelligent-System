@@ -64,9 +64,9 @@ public class GeminiAIService {
         StringBuilder prompt = new StringBuilder();
         prompt.append("You are an educational AI assistant. Analyze the following student's academic performance comprehensively:\n\n");
 
-        prompt.append("**Student Name:** ").append(studentName).append("\n\n");
+        prompt.append("Student Name: ").append(studentName).append("\n\n");
 
-        prompt.append("**Academic Grades:**\n");
+        prompt.append("Academic Grades: \n");
         if (grades.isEmpty()) {
             prompt.append("No grades available.\n");
         } else {
@@ -77,44 +77,24 @@ public class GeminiAIService {
             }
         }
 
-        prompt.append("\n**Attendance Rate:** ").append(String.format("%.1f", attendance)).append("%\n");
+        prompt.append("\nAttendance Rate: ").append(String.format("%.1f", attendance)).append("%\n");
 
         if (comments != null && !comments.trim().isEmpty()) {
-            prompt.append("\n**Teacher's Comments:** ").append(comments).append("\n");
+            prompt.append("\n Teacher's Comments: ").append(comments).append("\n");
         }
 
-        prompt.append("\n**Please provide a comprehensive analysis with the following sections:**\n\n");
-        prompt.append("1. **Performance Overview**\n");
-        prompt.append("   - Identify weak subjects (below 50%)\n");
-        prompt.append("   - Identify strong subjects (above 70%)\n");
-        prompt.append("   - Detect inconsistent performance patterns\n");
-        prompt.append("   - Calculate average performance\n\n");
+        prompt.append("\nProvide a brief analysis with ONLY these three sections. Use plain text format with clear section headers. Do not use markdown, asterisks, or special formatting.\n\n");
 
-        prompt.append("2. **Attendance Analysis**\n");
-        prompt.append("   - Evaluate attendance rate\n");
-        prompt.append("   - Correlate attendance with academic performance\n");
-        prompt.append("   - Determine if absenteeism is affecting results\n\n");
+        prompt.append("ENCOURAGEMENT AND FEEDBACK MESSAGES\n");
+        prompt.append("Write encouraging and positive feedback messages based on ").append(studentName).append("'s academic performance, attendance, and teacher comments. Acknowledge strengths and provide constructive hope for improvement.\n\n");
 
-        prompt.append("3. **Behavioral & Learning Issues**\n");
-        prompt.append("   - Analyze teacher's comments for behavioral patterns\n");
-        prompt.append("   - Identify learning challenges or difficulties\n");
-        prompt.append("   - Note any engagement or motivation issues\n\n");
+        prompt.append("BEHAVIOUR AND LEARNING ISSUES\n");
+        prompt.append("List behavioral or learning issues identified from the grades, attendance rate, and teacher comments. Be specific about areas of concern such as weak subjects, attendance problems, or behavioral patterns.\n\n");
 
-        prompt.append("4. **Possible Causes of Underperformance**\n");
-        prompt.append("   - List 3-5 specific potential causes based on the data\n");
-        prompt.append("   - Consider academic, behavioral, and attendance factors\n\n");
+        prompt.append("SUGGESTED IMPROVEMENT ACTIONS\n");
+        prompt.append("Provide specific, actionable recommendations for improvement. Include strategies for the student, parents, and teachers. Focus on practical steps that can address identified issues and build on strengths.\n\n");
 
-        prompt.append("5. **Suggested Improvement Actions**\n");
-        prompt.append("   - Provide 5-7 actionable recommendations\n");
-        prompt.append("   - Include strategies for parents, teachers, and the student\n");
-        prompt.append("   - Prioritize the most impactful interventions\n\n");
-
-        prompt.append("6. **Encouragement & Feedback Message**\n");
-        prompt.append("   - Write a positive, motivational message for the student\n");
-        prompt.append("   - Acknowledge strengths and provide hope for improvement\n");
-        prompt.append("   - Keep it encouraging but realistic\n\n");
-
-        prompt.append("Format your response clearly with headers and bullet points for easy reading.");
+        prompt.append("End with a brief summary statement about the student's potential and path forward.");
 
         return prompt.toString();
     }
