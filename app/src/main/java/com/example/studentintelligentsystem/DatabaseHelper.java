@@ -5,6 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.example.studentintelligentsystem.supabase.SupabaseSyncManager;
+import com.example.studentintelligentsystem.supabase.SupabaseConfig;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String TAG = "DatabaseHelper";
+    private Context context;
+    private SupabaseSyncManager syncManager;
 
     private static final String DATABASE_NAME = "StudentIntelligentSystem.db";
     private static final int DATABASE_VERSION = 6;
@@ -86,6 +93,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+
+        // Initialize sync manager if Supabase is configured
+        if (SupabaseConfig.isConfigured()) {
+            try {
+                this.syncManager = SupabaseSyncManager.getInstance(context);
+                Log.d(TAG, "✓ Supabase sync manager initialized");
+            } catch (Exception e) {
+                Log.w(TAG, "Supabase sync manager not available: " + e.getMessage());
+            }
+        } else {
+            Log.d(TAG, "Supabase not configured - sync disabled");
+        }
     }
 
     @Override
@@ -149,9 +169,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(SUBJECT_NAME, subjectName);
         values.put(SUBJECT_GRADE, grade);
         values.put(SUBJECT_FK_TEACHER_ID, teacherId);
-        long newRowId = db.insert(TABLE_SUBJECTS, null, values);
+        long subjectId = db.insert(TABLE_SUBJECTS, null, values);
         db.close();
-        return newRowId;
+
+        // Sync to Supabase
+        if (subjectId > 0 && syncManager != null) {
+            Log.d(TAG, "Syncing subject record " + subjectId + " to Supabase...");
+            syncManager.syncSubject((int) subjectId);
+        }
+
+        return subjectId;
     }
 
     public List<String> getSubjectsByGrade(int grade) {
@@ -194,14 +221,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{date});
     }
 
-    public void addAttendance(int studentId, String date, boolean isPresent) {
+    public void addAttendance(int studentId, String date, boolean isPresent, int teacherId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ATTENDANCE_FK_STUDENT_ID, studentId);
         values.put(ATTENDANCE_DATE, date);
         values.put(ATTENDANCE_STATUS, isPresent ? "Present" : "Absent");
-        db.insert(TABLE_ATTENDANCE, null, values);
+        values.put(ATTENDANCE_FK_TEACHER_ID, teacherId);  // Add teacher ID
+        long attendanceId = db.insert(TABLE_ATTENDANCE, null, values);
         db.close();
+
+        // Sync to Supabase
+        if (attendanceId > 0 && syncManager != null) {
+            Log.d(TAG, "Syncing attendance record " + attendanceId + " to Supabase...");
+            syncManager.syncAttendance((int) attendanceId);
+        }
     }
 
     public Cursor getStudentsByParentId(int parentId) {

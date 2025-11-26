@@ -324,15 +324,19 @@
                 android:layout_height="wrap_content"
                 android:text="Recent Announcements"
                 android:textColor="#212121"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="12dp" />
 
             <ListView
                 android:id="@+id/lvTeacherAnnouncements"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="wrap_content"
+                android:divider="#E0E0E0"
+                android:dividerHeight="1dp" />
 
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>
+

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -16,11 +17,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.studentintelligentsystem.supabase.SupabaseSyncManager;
+import com.example.studentintelligentsystem.supabase.SupabaseConfig;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class AddResultsActivity extends AppCompatActivity {
+    private static final String TAG = "AddResultsActivity";
 
     private AutoCompleteTextView spinnerStudentsResults, spinnerSubjects;
     private EditText editTerm, editMarks, editComment;
@@ -130,7 +135,20 @@ public class AddResultsActivity extends AppCompatActivity {
         db.close();
 
         if (newRowId != -1) {
+            Log.i(TAG, "✓ Result added with ID: " + newRowId);
             Toast.makeText(this, "Results added successfully!", Toast.LENGTH_SHORT).show();
+
+            // Sync to Supabase if configured
+            if (SupabaseConfig.isConfigured()) {
+                try {
+                    SupabaseSyncManager syncManager = SupabaseSyncManager.getInstance(this);
+                    Log.d(TAG, "Syncing result " + newRowId + " to Supabase...");
+                    syncManager.syncResult((int) newRowId);
+                    Log.i(TAG, "✓ Result sync initiated to Supabase");
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to sync result to Supabase: " + e.getMessage());
+                }
+            }
 
             // ✅ Send data to ViewResultsActivity using Intent (from your example)
             Intent intent = new Intent(AddResultsActivity.this, ViewResultsActivity.class);

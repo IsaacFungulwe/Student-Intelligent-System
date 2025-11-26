@@ -7,13 +7,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.studentintelligentsystem.supabase.SupabaseSyncManager;
+import com.example.studentintelligentsystem.supabase.SupabaseConfig;
+
 public class StudentRegisterActivity extends AppCompatActivity {
+    private static final String TAG = "StudentRegisterActivity";
 
     private EditText editStudentName, editStudentAge, editStudentGender, editStudentAddress, editParentEmailToLink;
     private Button btnRegisterStudent;
@@ -79,7 +84,21 @@ public class StudentRegisterActivity extends AppCompatActivity {
         db.close();
 
         if (newRowId != -1) {
+            Log.i(TAG, "✓ Student registered with ID: " + newRowId);
             Toast.makeText(this, "Student registered and linked successfully!", Toast.LENGTH_SHORT).show();
+
+            // Sync to Supabase if configured
+            if (SupabaseConfig.isConfigured()) {
+                try {
+                    SupabaseSyncManager syncManager = SupabaseSyncManager.getInstance(this);
+                    Log.d(TAG, "Syncing student " + newRowId + " to Supabase...");
+                    syncManager.syncStudent((int) newRowId);
+                    Log.i(TAG, "✓ Student sync initiated to Supabase");
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to sync student to Supabase: " + e.getMessage());
+                }
+            }
+
             finish(); // Go back to the teacher dashboard
         } else {
             Toast.makeText(this, "Error registering student.", Toast.LENGTH_LONG).show();

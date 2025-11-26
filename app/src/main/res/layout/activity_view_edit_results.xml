@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#FFFFFF"
     tools:context=".ViewEditResultsActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -16,31 +16,61 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All Student Results"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:textColor="?android:attr/textColorPrimary"/>
+        android:background="#F5F5F5">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tap the edit icon to modify results or delete icon to remove them."
-        android:textSize="14sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:textColor="?android:attr/textColorSecondary"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search Student"
+            android:textColor="#212121"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etSearchStudent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter student ID or name"
+            android:inputType="text"
+            android:autofillHints="name"
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="?attr/colorPrimary" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchLayout"
         android:padding="8dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvNoResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No results found"
+        android:textColor="#757575"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+</RelativeLayout>
 

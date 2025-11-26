@@ -3,23 +3,17 @@ package com.example.studentintelligentsystem;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditResultDialog extends Dialog {
 
     private Result result;
     private OnResultUpdatedListener listener;
-
-    private TextView tvStudentName;
-    private EditText editSubject;
-    private EditText editTerm;
-    private EditText editMarks;
-    private EditText editComment;
+    private EditText etMarks;
+    private EditText etComment;
     private Button btnSave;
     private Button btnCancel;
 
@@ -39,69 +33,47 @@ public class EditResultDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_edit_result);
 
-        tvStudentName = findViewById(R.id.tvStudentName);
-        editSubject = findViewById(R.id.editSubject);
-        editTerm = findViewById(R.id.editTerm);
-        editMarks = findViewById(R.id.editMarks);
-        editComment = findViewById(R.id.editComment);
+        etMarks = findViewById(R.id.etMarks);
+        etComment = findViewById(R.id.etComment);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
 
-        // Populate fields with current data
-        tvStudentName.setText(result.getStudentName());
-        editSubject.setText(result.getSubject());
-        editTerm.setText(result.getTerm());
-        editMarks.setText(String.valueOf(result.getMarks()));
-        editComment.setText(result.getComment());
+        // Pre-fill with current values
+        etMarks.setText(String.valueOf(result.getMarks()));
+        if (result.getComment() != null) {
+            etComment.setText(result.getComment());
+        }
 
-        btnSave.setOnClickListener(v -> {
-            if (validateAndSave()) {
-                dismiss();
-            }
-        });
-
+        btnSave.setOnClickListener(v -> saveResult());
         btnCancel.setOnClickListener(v -> dismiss());
     }
 
-    private boolean validateAndSave() {
-        String subject = editSubject.getText().toString().trim();
-        String term = editTerm.getText().toString().trim();
-        String marksStr = editMarks.getText().toString().trim();
-        String comment = editComment.getText().toString().trim();
+    private void saveResult() {
+        String marksStr = etMarks.getText().toString().trim();
+        String comment = etComment.getText().toString().trim();
 
-        if (TextUtils.isEmpty(subject) || TextUtils.isEmpty(term) || TextUtils.isEmpty(marksStr)) {
-            Toast.makeText(getContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show();
-            return false;
+        if (marksStr.isEmpty()) {
+            Toast.makeText(getContext(), "Please enter marks", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        int marks;
         try {
-            marks = Integer.parseInt(marksStr);
+            int marks = Integer.parseInt(marksStr);
             if (marks < 0 || marks > 100) {
                 Toast.makeText(getContext(), "Marks must be between 0 and 100", Toast.LENGTH_SHORT).show();
-                return false;
+                return;
             }
+
+            result.setMarks(marks);
+            result.setComment(comment);
+
+            if (listener != null) {
+                listener.onResultUpdated(result);
+            }
+            dismiss();
         } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Invalid marks value", Toast.LENGTH_SHORT).show();
-            return false;
+            Toast.makeText(getContext(), "Invalid marks format", Toast.LENGTH_SHORT).show();
         }
-
-        // Create updated result
-        Result updatedResult = new Result(
-                result.getResultId(),
-                result.getStudentId(),
-                result.getStudentName(),
-                subject,
-                term,
-                marks,
-                comment
-        );
-
-        if (listener != null) {
-            listener.onResultUpdated(updatedResult);
-        }
-
-        return true;
     }
 }
 

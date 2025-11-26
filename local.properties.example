@@ -8,3 +8,8 @@ sdk.dir=/path/to/your/Android/Sdk
 # Get your API key from: https://makersuite.google.com/app/apikey
 GEMINI_API_KEY=paste-your-gemini-api-key-here
 
+# Supabase Configuration (required for database)
+# Get these from: https://app.supabase.com/project/_/settings/api
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key-here
+

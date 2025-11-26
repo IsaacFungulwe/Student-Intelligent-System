@@ -48,31 +48,52 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvStudentName;
+        TextView tvStudentId;
         TextView tvSubject;
-        TextView tvTerm;
+        TextView tvExamType;
         TextView tvMarks;
-        TextView tvComment;
+        TextView tvGrade;
+        TextView tvExamDate;
         ImageButton btnEdit;
         ImageButton btnDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvStudentName = itemView.findViewById(R.id.tvStudentName);
+            tvStudentId = itemView.findViewById(R.id.tvStudentId);
             tvSubject = itemView.findViewById(R.id.tvSubject);
-            tvTerm = itemView.findViewById(R.id.tvTerm);
+            tvExamType = itemView.findViewById(R.id.tvExamType);
             tvMarks = itemView.findViewById(R.id.tvMarks);
-            tvComment = itemView.findViewById(R.id.tvComment);
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            tvGrade = itemView.findViewById(R.id.tvGrade);
+            tvExamDate = itemView.findViewById(R.id.tvExamDate);
+            btnEdit = itemView.findViewById(R.id.btnEditResult);
+            btnDelete = itemView.findViewById(R.id.btnDeleteResult);
         }
 
         void bind(Result result, int position) {
             tvStudentName.setText(result.getStudentName());
+            tvStudentId.setText("Student ID: " + result.getStudentId());
             tvSubject.setText(result.getSubject());
-            tvTerm.setText("Term: " + result.getTerm());
-            tvMarks.setText("Marks: " + result.getMarks() + "%");
-            tvComment.setText(result.getComment() != null && !result.getComment().isEmpty()
-                ? result.getComment() : "No comment");
+            tvExamType.setText(result.getTerm());
+            tvMarks.setText(result.getMarks() + "/100");
+            
+            // Calculate and set grade
+            int marks = result.getMarks();
+            String grade;
+            if (marks >= 90) grade = "A+";
+            else if (marks >= 80) grade = "A";
+            else if (marks >= 70) grade = "B";
+            else if (marks >= 60) grade = "C";
+            else if (marks >= 50) grade = "D";
+            else grade = "F";
+            tvGrade.setText(grade);
+            
+            // Set exam date if available
+            if (result.getComment() != null && !result.getComment().isEmpty()) {
+                tvExamDate.setText(result.getComment());
+            } else {
+                tvExamDate.setText("N/A");
+            }
 
             btnEdit.setOnClickListener(v -> {
                 if (listener != null) {
