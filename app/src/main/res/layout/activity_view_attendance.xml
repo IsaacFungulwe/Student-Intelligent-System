@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="#F0F4F8"
     android:padding="16dp"
+    android:fitsSystemWindows="true"
     tools:context=".ViewAttendanceActivity">
 
     <TextView

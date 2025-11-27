@@ -80,10 +80,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    // OkHttp for HTTP requests
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation(libs.mpandroidchart)
-    implementation(libs.generativeai)
     implementation(libs.guava)
     implementation(libs.reactiveStreams)
     testImplementation(libs.junit)

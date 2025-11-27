@@ -3,22 +3,18 @@ package com.example.studentintelligentsystem;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class TeacherDashboardActivity extends AppCompatActivity {
 
@@ -26,6 +22,8 @@ public class TeacherDashboardActivity extends AppCompatActivity {
     private CardView cardRegisterStudent, cardMarkAttendance, cardAddResults, cardManageSubjects, cardPostTeacherAnnouncement, cardManageAnnouncements, cardViewParents;
     private ListView lvTeacherAnnouncements;
     private DatabaseHelper dbHelper;
+    private AnnouncementLoader announcementLoader;
+    private int teacherGrade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +34,8 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         dbHelper = new DatabaseHelper(this);
+        announcementLoader = new AnnouncementLoader(this);
+
         tvTeacherWelcome = findViewById(R.id.tvTeacherWelcome);
         cardRegisterStudent = findViewById(R.id.cardRegisterStudent);
         cardMarkAttendance = findViewById(R.id.cardMarkAttendance);
@@ -47,7 +47,7 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         lvTeacherAnnouncements = findViewById(R.id.lvTeacherAnnouncements);
 
         SharedPreferences prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        int teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
+        teacherGrade = prefs.getInt(LoginActivity.KEY_USER_GRADE, -1);
 
         if (teacherGrade != -1) {
             tvTeacherWelcome.setText("Teacher Dashboard (Grade " + teacherGrade + ")");
@@ -63,61 +63,62 @@ public class TeacherDashboardActivity extends AppCompatActivity {
         cardManageAnnouncements.setOnClickListener(v -> startActivity(new Intent(this, ManageAnnouncementsActivity.class)));
         cardViewParents.setOnClickListener(v -> startActivity(new Intent(this, ViewParentsActivity.class)));
 
-        loadAnnouncements(teacherGrade);
+        loadAnnouncements();
     }
 
-    private void loadAnnouncements(int teacherGrade) {
-        ArrayList<String> announcementList = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAnnouncements();
+    }
 
-        String selection = DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET + " = ? OR " + DatabaseHelper.ANNOUNCEMENT_GRADE_TARGET + " IS NULL";
-        String[] selectionArgs = {String.valueOf(teacherGrade)};
-
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ANNOUNCEMENT, new String[]{DatabaseHelper.ANNOUNCEMENT_TITLE, DatabaseHelper.ANNOUNCEMENT_MESSAGE, DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP},
-                selection, selectionArgs, null, null, DatabaseHelper.ANNOUNCEMENT_TIMESTAMP + " DESC");
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_TITLE));
-                String message = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_MESSAGE));
-                String source = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_SOURCE_LABEL));
-                String timestamp = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.ANNOUNCEMENT_TIMESTAMP));
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                try {
-                    Date date = sdf.parse(timestamp);
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault());
-                    timestamp = outputFormat.format(date);
-                } catch (Exception e) {
-                    // Keep raw timestamp if parsing fails
-                }
-
-                announcementList.add("[" + source + "] " + title + "\n" + message + "\n" + timestamp);
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        db.close();
-
-        if (announcementList.isEmpty()) {
-            announcementList.add("No announcements available right now.");
+    private void loadAnnouncements() {
+        if (teacherGrade == -1) {
+            ArrayList<String> errorList = new ArrayList<>();
+            errorList.add("Error: Could not load grade information");
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, errorList);
+            lvTeacherAnnouncements.setAdapter(adapter);
+            return;
         }
 
+        ArrayList<String> announcementList = (ArrayList<String>) announcementLoader.loadTeacherAnnouncements(teacherGrade);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, announcementList);
         lvTeacherAnnouncements.setAdapter(adapter);
     }
 
+    private void syncAnnouncements() {
+        Toast.makeText(this, "Syncing announcements...", Toast.LENGTH_SHORT).show();
+
+        announcementLoader.syncAnnouncementsFromSupabase((success, message) -> {
+            runOnUiThread(() -> {
+                if (success) {
+                    loadAnnouncements();
+                    Toast.makeText(this, "Announcements synced", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Sync error: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_logout, menu);
+        getMenuInflater().inflate(R.menu.menu_teacher_dashboard, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            syncAnnouncements();
+            return true;
+        } else if (id == R.id.action_logout) {
             logout();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -237,5 +237,57 @@ public class SupabaseClient {
     public boolean isInitialized() {
         return isInitialized;
     }
+
+    /**
+     * Query parent by email from Supabase
+     * Returns the parent JSON object if found, null otherwise
+     */
+    public JSONObject getParentByEmail(String email) {
+        if (!isInitialized || !SupabaseConfig.isConfigured()) {
+            Log.e(TAG, "Cannot query parent: Supabase not properly initialized");
+            return null;
+        }
+
+        try {
+            String urlString = SupabaseConfig.SUPABASE_URL + "/rest/v1/parents?email=eq." + email;
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("apikey", SupabaseConfig.SUPABASE_ANON_KEY);
+            conn.setRequestProperty("Authorization", "Bearer " + SupabaseConfig.SUPABASE_ANON_KEY);
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+
+                // Parse response as JSON array
+                String jsonResponse = response.toString();
+                org.json.JSONArray jsonArray = new org.json.JSONArray(jsonResponse);
+                
+                if (jsonArray.length() > 0) {
+                    Log.d(TAG, "✓ Parent found in Supabase with email: " + email);
+                    return jsonArray.getJSONObject(0);
+                } else {
+                    Log.d(TAG, "No parent found in Supabase with email: " + email);
+                    return null;
+                }
+            } else {
+                Log.e(TAG, "Query parent by email failed: " + responseCode);
+                return null;
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error querying parent by email: " + e.getMessage(), e);
+            return null;
+        }
+    }
 }
 

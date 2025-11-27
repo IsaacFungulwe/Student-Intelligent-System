@@ -106,6 +106,7 @@ public class StudentRegisterActivity extends AppCompatActivity {
     }
 
     private long getParentIdByEmail(String email) {
+        // First check local database
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(
                 DatabaseHelper.TABLE_PARENT,
@@ -119,11 +120,55 @@ public class StudentRegisterActivity extends AppCompatActivity {
             long parentId = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseHelper.PARENT_ID));
             cursor.close();
             db.close();
+            Log.d(TAG, "✓ Parent found locally with email: " + email);
             return parentId;
-        } else {
-            if (cursor != null) cursor.close();
-            db.close();
-            return -1; // Parent not found
         }
+
+        if (cursor != null) cursor.close();
+        db.close();
+
+        // If not found locally and Supabase is configured, check Supabase
+        if (SupabaseConfig.isConfigured()) {
+            try {
+                Log.d(TAG, "Checking Supabase for parent with email: " + email);
+
+                // Query Supabase in background thread
+                final long[] result = {-1};
+                Thread thread = new Thread(() -> {
+                    try {
+                        com.example.studentintelligentsystem.supabase.SupabaseClient client =
+                            com.example.studentintelligentsystem.supabase.SupabaseClient.getInstance();
+
+                        org.json.JSONObject parentData = client.getParentByEmail(email);
+
+                        if (parentData != null) {
+                            // Parent exists in Supabase, sync to local database
+                            Log.d(TAG, "✓ Parent found in Supabase, syncing to local database");
+                            long parentId = dbHelper.insertOrUpdateParentFromSupabase(parentData);
+                            result[0] = parentId;
+                        } else {
+                            Log.d(TAG, "Parent not found in Supabase either");
+                            result[0] = -1;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error checking Supabase for parent: " + e.getMessage());
+                        result[0] = -1;
+                    }
+                });
+
+                thread.start();
+                thread.join(5000); // Wait up to 5 seconds
+
+                return result[0];
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error querying parent from Supabase: " + e.getMessage());
+                return -1;
+            }
+        }
+
+        // Parent not found locally or in Supabase
+        Log.d(TAG, "Parent not found with email: " + email);
+        return -1;
     }
 }

@@ -305,4 +305,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return rowsDeleted > 0;
     }
+
+    /**
+     * Insert or update parent from Supabase data into local database
+     * @param parentData JSON object containing parent data from Supabase
+     * @return parent ID if successful, -1 otherwise
+     */
+    public long insertOrUpdateParentFromSupabase(org.json.JSONObject parentData) {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            
+            int parentId = parentData.getInt("id");
+            String name = parentData.getString("name");
+            String email = parentData.getString("email");
+            String phone = parentData.optString("phone", "");
+            String password = parentData.getString("password_hash");
+            int adminId = parentData.getInt("admin_id");
+            
+            values.put(PARENT_ID, parentId);
+            values.put(PARENT_NAME, name);
+            values.put(PARENT_EMAIL, email);
+            values.put(PARENT_PHONE, phone);
+            values.put(PARENT_PASSWORD, password);
+            values.put(PARENT_FK_ADMIN_ID, adminId);
+            
+            // Check if parent already exists locally
+            Cursor cursor = db.query(TABLE_PARENT, new String[]{PARENT_ID}, 
+                PARENT_ID + "=?", new String[]{String.valueOf(parentId)}, 
+                null, null, null);
+            
+            long result;
+            if (cursor != null && cursor.moveToFirst()) {
+                // Update existing parent
+                int rowsAffected = db.update(TABLE_PARENT, values, 
+                    PARENT_ID + "=?", new String[]{String.valueOf(parentId)});
+                result = rowsAffected > 0 ? parentId : -1;
+                cursor.close();
+                Log.d(TAG, "✓ Updated parent from Supabase: " + email);
+            } else {
+                // Insert new parent
+                result = db.insertWithOnConflict(TABLE_PARENT, null, values, 
+                    SQLiteDatabase.CONFLICT_REPLACE);
+                if (cursor != null) cursor.close();
+                Log.d(TAG, "✓ Inserted parent from Supabase: " + email);
+            }
+            
+            db.close();
+            return result;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error inserting/updating parent from Supabase: " + e.getMessage());
+            return -1;
+        }
+    }
 }
